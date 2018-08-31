@@ -72,7 +72,7 @@ public:
     DBQuery& insert( const Args& ... args )
     {
         clear();
-        int argLen = sizeof ...( Args ) - 1;
+        int argLen = sizeof ...( Args );
         m_sql << " insert into " << m_table ;
 
         if ( argLen > 0 )
@@ -84,7 +84,7 @@ public:
 
         for ( int i  = 0; i   < argLen ; i++ )
         {
-            if ( i < argLen - 1 )
+            if ( i < argLen )
             {
                 format << " {}, ";
             }
@@ -109,14 +109,14 @@ public:
     DBQuery& update( const Args& ... args )
     {
         clear();
-        int argLen = sizeof ...( Args ) - 1;
+        int argLen = sizeof ...( Args );
         m_sql << " update " << m_table ;
 
         fmt::MemoryWriter format;
 
         for ( int i  = 0; i   < argLen ; i++ )
         {
-            if ( i < argLen - 1 )
+            if ( i < argLen )
             {
                 format << " {}, ";
             }
@@ -226,14 +226,14 @@ public:
     template <typename ... Args>
     DBQuery& values( const Args& ... args )
     {
-        int argLen = sizeof ...( Args ) - 1;
+        int argLen = sizeof ...( Args );
         m_sql << " values " << " ( "  ;
 
         fmt::MemoryWriter format;
 
         for ( int i  = 0; i   < argLen ; i++ )
         {
-            if ( i < argLen - 1 )
+            if ( i < argLen )
             {
                 format << " {}, ";
             }
@@ -255,14 +255,14 @@ public:
     DBQuery& select( const Args& ... args )
     {
         clear();
-        int argLen = sizeof ...( Args ) - 1;
+        int argLen = sizeof ...( Args );
         m_sql << "select " ;
 
         fmt::MemoryWriter format;
 
         for ( int i  = 0; i   < argLen  ; i++ )
         {
-            if ( i < argLen - 1 )
+            if ( i < argLen )
             {
                 format << " {}, ";
             }
