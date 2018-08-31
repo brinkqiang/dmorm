@@ -7,6 +7,9 @@
 
 #include "person.pb.h"
 
+#define DM_MAGIC ,
+#define DM_MAGIC_END
+
 using namespace gdp::db;
 
 class CDMPB_tb_Person
@@ -40,16 +43,16 @@ public:
     int Insert(::db::tb_Person& data)
     {
         m_oQuery.table("db.tb_Person").insert( 
-            "id", 
-            "number", 
-            "email", 
-            "phonetype",
-            0).values( 
-                data.id(), 
-                data.number(), 
-                data.email(), 
-                data.phonetype(),
-                0);
+            "id" DM_MAGIC 
+            "number" DM_MAGIC 
+            "email" DM_MAGIC 
+            "phonetype" DM_MAGIC_END
+            ).values(
+                data.id() DM_MAGIC
+                data.number() DM_MAGIC
+                data.email() DM_MAGIC
+                data.phonetype() DM_MAGIC_END
+                );
         std::string strSQL = m_oQuery.sql();
         return m_oDB.execute(m_oQuery);
     }
@@ -57,11 +60,11 @@ public:
     int Select(::db::tb_Person& data, std::vector<::db::tb_Person>& datas)
     {
         m_oQuery.table("db.tb_Person").select( 
-            "id", 
-            "number", 
-            "email", 
-            "phonetype",
-            0).where("id", data.id());
+            "id" DM_MAGIC 
+            "number" DM_MAGIC 
+            "email" DM_MAGIC 
+            "phonetype" DM_MAGIC_END
+            ).where("id", data.id());
         std::string strSQL = m_oQuery.sql();
         m_oDB.get(m_oQuery, [&datas](ResultSetPtr res)
         {
@@ -130,12 +133,12 @@ public:
     int Insert(::db::tb_Person2& data)
     {
         m_oQuery.table("db.tb_Person2").insert( 
-            "id", 
-            "name",
-            0).values( 
-                data.id(), 
-                data.name(),
-                0);
+            "id" DM_MAGIC 
+            "name" DM_MAGIC_END
+            ).values(
+                data.id() DM_MAGIC
+                data.name() DM_MAGIC_END
+                );
         std::string strSQL = m_oQuery.sql();
         return m_oDB.execute(m_oQuery);
     }
@@ -143,9 +146,9 @@ public:
     int Select(::db::tb_Person2& data, std::vector<::db::tb_Person2>& datas)
     {
         m_oQuery.table("db.tb_Person2").select( 
-            "id", 
-            "name",
-            0).where("id", data.id());
+            "id" DM_MAGIC 
+            "name" DM_MAGIC_END
+            ).where("id", data.id());
         std::string strSQL = m_oQuery.sql();
         m_oDB.get(m_oQuery, [&datas](ResultSetPtr res)
         {
@@ -205,4 +208,7 @@ void db_DropTable(GDb& oDB, DBQuery& oQuery)
     }
 }
 
+
+#undef DM_MAGIC
+#undef DM_MAGIC_END
 #endif // __PERSON_ORM_H_INCLUDE__
