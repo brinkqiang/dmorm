@@ -57,6 +57,30 @@ public:
         return m_oDB.execute(m_oQuery);
     }
 
+    int Select(std::vector<::db::tb_Person> & datas)
+    {
+        m_oQuery.table("db.tb_Person").select(
+            "id" DM_MAGIC 
+            "number" DM_MAGIC 
+            "email" DM_MAGIC 
+            "phonetype" DM_MAGIC_END 
+        );
+        std::string strSQL = m_oQuery.sql();
+        m_oDB.get(m_oQuery, [&datas](ResultSetPtr res)
+        {
+            while (res->next())
+            {
+                ::db::tb_Person tmp; 
+                tmp.set_id((::google::protobuf::uint64)res->get_int("id")); 
+                tmp.set_number((::std::string)res->get_string("number")); 
+                tmp.set_email((::std::string)res->get_string("email")); 
+                tmp.set_phonetype((::db::PhoneType)res->get_int("phonetype")); 
+                datas.push_back(tmp);
+            }
+        });
+        return datas.size();
+    }
+
     int Select(::db::tb_Person& data, std::vector<::db::tb_Person>& datas)
     {
         m_oQuery.table("db.tb_Person").select( 
