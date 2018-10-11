@@ -15,7 +15,7 @@ int main()
     CDMPB_tb_Person oPerson(oGDB, oQuery);
 
     db::tb_Person data;
-    data.set_id(::db::MessageId::MSGID_tb_Person);
+    data.set_id(time(0));
     data.set_number("13900112233");
     data.set_email("person@163.com");
     data.set_phonetype(::db::PhoneType::WORK);
@@ -26,10 +26,11 @@ int main()
         std::vector<db::tb_Person> datas;
         oPerson.Select(data, datas);
     }
+    db::tb_Person data2;
+    data2.set_id(data.id());
+    data2.set_number("123456789");
 
-    data.set_number("123456789");
-
-    oPerson.Update(data);
+    oPerson.Update(data2);
 
     {
         std::vector<db::tb_Person> datas;

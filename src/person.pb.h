@@ -37,7 +37,7 @@ namespace protobuf_person_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[2];
+  static const ::google::protobuf::internal::ParseTable schema[1];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -45,42 +45,17 @@ struct TableStruct {
 void AddDescriptors();
 void InitDefaultstb_PersonImpl();
 void InitDefaultstb_Person();
-void InitDefaultstb_Person2Impl();
-void InitDefaultstb_Person2();
 inline void InitDefaults() {
   InitDefaultstb_Person();
-  InitDefaultstb_Person2();
 }
 }  // namespace protobuf_person_2eproto
 namespace db {
 class tb_Person;
 class tb_PersonDefaultTypeInternal;
 extern tb_PersonDefaultTypeInternal _tb_Person_default_instance_;
-class tb_Person2;
-class tb_Person2DefaultTypeInternal;
-extern tb_Person2DefaultTypeInternal _tb_Person2_default_instance_;
 }  // namespace db
 namespace db {
 
-enum MessageId {
-  MSGID_tb_Person = 1000,
-  MSGID_tb_Person2 = 1001
-};
-bool MessageId_IsValid(int value);
-const MessageId MessageId_MIN = MSGID_tb_Person;
-const MessageId MessageId_MAX = MSGID_tb_Person2;
-const int MessageId_ARRAYSIZE = MessageId_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* MessageId_descriptor();
-inline const ::std::string& MessageId_Name(MessageId value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    MessageId_descriptor(), value);
-}
-inline bool MessageId_Parse(
-    const ::std::string& name, MessageId* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<MessageId>(
-    MessageId_descriptor(), name, value);
-}
 enum PhoneType {
   MOBILE = 0,
   HOME = 1,
@@ -222,19 +197,19 @@ class tb_Person : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::std::string* release_email();
   void set_allocated_email(::std::string* email);
 
+  // optional uint64 id = 1;
+  bool has_id() const;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::uint64 id() const;
+  void set_id(::google::protobuf::uint64 value);
+
   // optional .db.PhoneType phonetype = 4;
   bool has_phonetype() const;
   void clear_phonetype();
   static const int kPhonetypeFieldNumber = 4;
   ::db::PhoneType phonetype() const;
   void set_phonetype(::db::PhoneType value);
-
-  // optional .db.MessageId id = 1 [default = MSGID_tb_Person];
-  bool has_id() const;
-  void clear_id();
-  static const int kIdFieldNumber = 1;
-  ::db::MessageId id() const;
-  void set_id(::db::MessageId value);
 
   // @@protoc_insertion_point(class_scope:db.tb_Person)
  private:
@@ -252,138 +227,10 @@ class tb_Person : public ::google::protobuf::Message /* @@protoc_insertion_point
   mutable int _cached_size_;
   ::google::protobuf::internal::ArenaStringPtr number_;
   ::google::protobuf::internal::ArenaStringPtr email_;
+  ::google::protobuf::uint64 id_;
   int phonetype_;
-  int id_;
   friend struct ::protobuf_person_2eproto::TableStruct;
   friend void ::protobuf_person_2eproto::InitDefaultstb_PersonImpl();
-};
-// -------------------------------------------------------------------
-
-class tb_Person2 : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:db.tb_Person2) */ {
- public:
-  tb_Person2();
-  virtual ~tb_Person2();
-
-  tb_Person2(const tb_Person2& from);
-
-  inline tb_Person2& operator=(const tb_Person2& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  tb_Person2(tb_Person2&& from) noexcept
-    : tb_Person2() {
-    *this = ::std::move(from);
-  }
-
-  inline tb_Person2& operator=(tb_Person2&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const tb_Person2& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const tb_Person2* internal_default_instance() {
-    return reinterpret_cast<const tb_Person2*>(
-               &_tb_Person2_default_instance_);
-  }
-  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    1;
-
-  void Swap(tb_Person2* other);
-  friend void swap(tb_Person2& a, tb_Person2& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline tb_Person2* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  tb_Person2* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const tb_Person2& from);
-  void MergeFrom(const tb_Person2& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(tb_Person2* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional string name = 2;
-  bool has_name() const;
-  void clear_name();
-  static const int kNameFieldNumber = 2;
-  const ::std::string& name() const;
-  void set_name(const ::std::string& value);
-  #if LANG_CXX11
-  void set_name(::std::string&& value);
-  #endif
-  void set_name(const char* value);
-  void set_name(const char* value, size_t size);
-  ::std::string* mutable_name();
-  ::std::string* release_name();
-  void set_allocated_name(::std::string* name);
-
-  // optional .db.MessageId id = 1 [default = MSGID_tb_Person2];
-  bool has_id() const;
-  void clear_id();
-  static const int kIdFieldNumber = 1;
-  ::db::MessageId id() const;
-  void set_id(::db::MessageId value);
-
-  // @@protoc_insertion_point(class_scope:db.tb_Person2)
- private:
-  void set_has_id();
-  void clear_has_id();
-  void set_has_name();
-  void clear_has_name();
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::HasBits<1> _has_bits_;
-  mutable int _cached_size_;
-  ::google::protobuf::internal::ArenaStringPtr name_;
-  int id_;
-  friend struct ::protobuf_person_2eproto::TableStruct;
-  friend void ::protobuf_person_2eproto::InitDefaultstb_Person2Impl();
 };
 // ===================================================================
 
@@ -396,26 +243,25 @@ class tb_Person2 : public ::google::protobuf::Message /* @@protoc_insertion_poin
 #endif  // __GNUC__
 // tb_Person
 
-// optional .db.MessageId id = 1 [default = MSGID_tb_Person];
+// optional uint64 id = 1;
 inline bool tb_Person::has_id() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000004u) != 0;
 }
 inline void tb_Person::set_has_id() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000004u;
 }
 inline void tb_Person::clear_has_id() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void tb_Person::clear_id() {
-  id_ = 1000;
+  id_ = GOOGLE_ULONGLONG(0);
   clear_has_id();
 }
-inline ::db::MessageId tb_Person::id() const {
+inline ::google::protobuf::uint64 tb_Person::id() const {
   // @@protoc_insertion_point(field_get:db.tb_Person.id)
-  return static_cast< ::db::MessageId >(id_);
+  return id_;
 }
-inline void tb_Person::set_id(::db::MessageId value) {
-  assert(::db::MessageId_IsValid(value));
+inline void tb_Person::set_id(::google::protobuf::uint64 value) {
   set_has_id();
   id_ = value;
   // @@protoc_insertion_point(field_set:db.tb_Person.id)
@@ -549,13 +395,13 @@ inline void tb_Person::set_allocated_email(::std::string* email) {
 
 // optional .db.PhoneType phonetype = 4;
 inline bool tb_Person::has_phonetype() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void tb_Person::set_has_phonetype() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void tb_Person::clear_has_phonetype() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void tb_Person::clear_phonetype() {
   phonetype_ = 0;
@@ -572,103 +418,9 @@ inline void tb_Person::set_phonetype(::db::PhoneType value) {
   // @@protoc_insertion_point(field_set:db.tb_Person.phonetype)
 }
 
-// -------------------------------------------------------------------
-
-// tb_Person2
-
-// optional .db.MessageId id = 1 [default = MSGID_tb_Person2];
-inline bool tb_Person2::has_id() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void tb_Person2::set_has_id() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void tb_Person2::clear_has_id() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void tb_Person2::clear_id() {
-  id_ = 1001;
-  clear_has_id();
-}
-inline ::db::MessageId tb_Person2::id() const {
-  // @@protoc_insertion_point(field_get:db.tb_Person2.id)
-  return static_cast< ::db::MessageId >(id_);
-}
-inline void tb_Person2::set_id(::db::MessageId value) {
-  assert(::db::MessageId_IsValid(value));
-  set_has_id();
-  id_ = value;
-  // @@protoc_insertion_point(field_set:db.tb_Person2.id)
-}
-
-// optional string name = 2;
-inline bool tb_Person2::has_name() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void tb_Person2::set_has_name() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void tb_Person2::clear_has_name() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void tb_Person2::clear_name() {
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_name();
-}
-inline const ::std::string& tb_Person2::name() const {
-  // @@protoc_insertion_point(field_get:db.tb_Person2.name)
-  return name_.GetNoArena();
-}
-inline void tb_Person2::set_name(const ::std::string& value) {
-  set_has_name();
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:db.tb_Person2.name)
-}
-#if LANG_CXX11
-inline void tb_Person2::set_name(::std::string&& value) {
-  set_has_name();
-  name_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:db.tb_Person2.name)
-}
-#endif
-inline void tb_Person2::set_name(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  set_has_name();
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:db.tb_Person2.name)
-}
-inline void tb_Person2::set_name(const char* value, size_t size) {
-  set_has_name();
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:db.tb_Person2.name)
-}
-inline ::std::string* tb_Person2::mutable_name() {
-  set_has_name();
-  // @@protoc_insertion_point(field_mutable:db.tb_Person2.name)
-  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* tb_Person2::release_name() {
-  // @@protoc_insertion_point(field_release:db.tb_Person2.name)
-  clear_has_name();
-  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void tb_Person2::set_allocated_name(::std::string* name) {
-  if (name != NULL) {
-    set_has_name();
-  } else {
-    clear_has_name();
-  }
-  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
-  // @@protoc_insertion_point(field_set_allocated:db.tb_Person2.name)
-}
-
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
-// -------------------------------------------------------------------
-
 
 // @@protoc_insertion_point(namespace_scope)
 
@@ -677,11 +429,6 @@ inline void tb_Person2::set_allocated_name(::std::string* name) {
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::db::MessageId> : ::google::protobuf::internal::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::db::MessageId>() {
-  return ::db::MessageId_descriptor();
-}
 template <> struct is_proto_enum< ::db::PhoneType> : ::google::protobuf::internal::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::db::PhoneType>() {

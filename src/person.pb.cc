@@ -25,11 +25,6 @@ class tb_PersonDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<tb_Person>
       _instance;
 } _tb_Person_default_instance_;
-class tb_Person2DefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<tb_Person2>
-      _instance;
-} _tb_Person2_default_instance_;
 }  // namespace db
 namespace protobuf_person_2eproto {
 void InitDefaultstb_PersonImpl() {
@@ -53,29 +48,8 @@ void InitDefaultstb_Person() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultstb_PersonImpl);
 }
 
-void InitDefaultstb_Person2Impl() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  {
-    void* ptr = &::db::_tb_Person2_default_instance_;
-    new (ptr) ::db::tb_Person2();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::db::tb_Person2::InitAsDefaultInstance();
-}
-
-void InitDefaultstb_Person2() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultstb_Person2Impl);
-}
-
-::google::protobuf::Metadata file_level_metadata[2];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[2];
+::google::protobuf::Metadata file_level_metadata[1];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person, _has_bits_),
@@ -87,28 +61,17 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person, number_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person, email_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person, phonetype_),
-  3,
-  0,
-  1,
   2,
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person2, _has_bits_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person2, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person2, id_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::db::tb_Person2, name_),
-  1,
   0,
+  1,
+  3,
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, sizeof(::db::tb_Person)},
-  { 13, 20, sizeof(::db::tb_Person2)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::db::_tb_Person_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::db::_tb_Person2_default_instance_),
 };
 
 void protobuf_AssignDescriptors() {
@@ -127,23 +90,19 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 2);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 1);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\014person.proto\022\002db\"x\n\ttb_Person\022*\n\002id\030\001 "
-      "\001(\0162\r.db.MessageId:\017MSGID_tb_Person\022\016\n\006n"
-      "umber\030\002 \001(\t\022\r\n\005email\030\003 \001(\t\022 \n\tphonetype\030"
-      "\004 \001(\0162\r.db.PhoneType\"G\n\ntb_Person2\022+\n\002id"
-      "\030\001 \001(\0162\r.db.MessageId:\020MSGID_tb_Person2\022"
-      "\014\n\004name\030\002 \001(\t*8\n\tMessageId\022\024\n\017MSGID_tb_P"
-      "erson\020\350\007\022\025\n\020MSGID_tb_Person2\020\351\007*+\n\tPhone"
-      "Type\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002"
+      "\n\014person.proto\022\002db\"X\n\ttb_Person\022\n\n\002id\030\001 "
+      "\001(\004\022\016\n\006number\030\002 \001(\t\022\r\n\005email\030\003 \001(\t\022 \n\tph"
+      "onetype\030\004 \001(\0162\r.db.PhoneType*+\n\tPhoneTyp"
+      "e\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 316);
+      descriptor, 153);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "person.proto", &protobuf_RegisterTypes);
 }
@@ -160,23 +119,9 @@ struct StaticDescriptorInitializer {
 } static_descriptor_initializer;
 }  // namespace protobuf_person_2eproto
 namespace db {
-const ::google::protobuf::EnumDescriptor* MessageId_descriptor() {
-  protobuf_person_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_person_2eproto::file_level_enum_descriptors[0];
-}
-bool MessageId_IsValid(int value) {
-  switch (value) {
-    case 1000:
-    case 1001:
-      return true;
-    default:
-      return false;
-  }
-}
-
 const ::google::protobuf::EnumDescriptor* PhoneType_descriptor() {
   protobuf_person_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_person_2eproto::file_level_enum_descriptors[1];
+  return protobuf_person_2eproto::file_level_enum_descriptors[0];
 }
 bool PhoneType_IsValid(int value) {
   switch (value) {
@@ -223,9 +168,9 @@ tb_Person::tb_Person(const tb_Person& from)
   if (from.has_email()) {
     email_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.email_);
   }
-  ::memcpy(&phonetype_, &from.phonetype_,
-    static_cast<size_t>(reinterpret_cast<char*>(&id_) -
-    reinterpret_cast<char*>(&phonetype_)) + sizeof(id_));
+  ::memcpy(&id_, &from.id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&phonetype_) -
+    reinterpret_cast<char*>(&id_)) + sizeof(phonetype_));
   // @@protoc_insertion_point(copy_constructor:db.tb_Person)
 }
 
@@ -233,8 +178,9 @@ void tb_Person::SharedCtor() {
   _cached_size_ = 0;
   number_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   email_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  phonetype_ = 0;
-  id_ = 1000;
+  ::memset(&id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&phonetype_) -
+      reinterpret_cast<char*>(&id_)) + sizeof(phonetype_));
 }
 
 tb_Person::~tb_Person() {
@@ -288,8 +234,9 @@ void tb_Person::Clear() {
     }
   }
   if (cached_has_bits & 12u) {
-    phonetype_ = 0;
-    id_ = 1000;
+    ::memset(&id_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&phonetype_) -
+        reinterpret_cast<char*>(&id_)) + sizeof(phonetype_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -305,20 +252,14 @@ bool tb_Person::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .db.MessageId id = 1 [default = MSGID_tb_Person];
+      // optional uint64 id = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          int value;
+          set_has_id();
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::db::MessageId_IsValid(value)) {
-            set_id(static_cast< ::db::MessageId >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(
-                1, static_cast< ::google::protobuf::uint64>(value));
-          }
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &id_)));
         } else {
           goto handle_unusual;
         }
@@ -404,10 +345,9 @@ void tb_Person::SerializeWithCachedSizes(
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // optional .db.MessageId id = 1 [default = MSGID_tb_Person];
-  if (cached_has_bits & 0x00000008u) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->id(), output);
+  // optional uint64 id = 1;
+  if (cached_has_bits & 0x00000004u) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->id(), output);
   }
 
   // optional string number = 2;
@@ -431,7 +371,7 @@ void tb_Person::SerializeWithCachedSizes(
   }
 
   // optional .db.PhoneType phonetype = 4;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       4, this->phonetype(), output);
   }
@@ -451,10 +391,9 @@ void tb_Person::SerializeWithCachedSizes(
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  // optional .db.MessageId id = 1 [default = MSGID_tb_Person];
-  if (cached_has_bits & 0x00000008u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->id(), target);
+  // optional uint64 id = 1;
+  if (cached_has_bits & 0x00000004u) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->id(), target);
   }
 
   // optional string number = 2;
@@ -480,7 +419,7 @@ void tb_Person::SerializeWithCachedSizes(
   }
 
   // optional .db.PhoneType phonetype = 4;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       4, this->phonetype(), target);
   }
@@ -517,16 +456,17 @@ size_t tb_Person::ByteSizeLong() const {
           this->email());
     }
 
+    // optional uint64 id = 1;
+    if (has_id()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt64Size(
+          this->id());
+    }
+
     // optional .db.PhoneType phonetype = 4;
     if (has_phonetype()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->phonetype());
-    }
-
-    // optional .db.MessageId id = 1 [default = MSGID_tb_Person];
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->id());
     }
 
   }
@@ -570,10 +510,10 @@ void tb_Person::MergeFrom(const tb_Person& from) {
       email_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.email_);
     }
     if (cached_has_bits & 0x00000004u) {
-      phonetype_ = from.phonetype_;
+      id_ = from.id_;
     }
     if (cached_has_bits & 0x00000008u) {
-      id_ = from.id_;
+      phonetype_ = from.phonetype_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -605,333 +545,14 @@ void tb_Person::InternalSwap(tb_Person* other) {
   using std::swap;
   number_.Swap(&other->number_);
   email_.Swap(&other->email_);
-  swap(phonetype_, other->phonetype_);
   swap(id_, other->id_);
+  swap(phonetype_, other->phonetype_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata tb_Person::GetMetadata() const {
-  protobuf_person_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_person_2eproto::file_level_metadata[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
-void tb_Person2::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int tb_Person2::kIdFieldNumber;
-const int tb_Person2::kNameFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-tb_Person2::tb_Person2()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_person_2eproto::InitDefaultstb_Person2();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:db.tb_Person2)
-}
-tb_Person2::tb_Person2(const tb_Person2& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _has_bits_(from._has_bits_),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.has_name()) {
-    name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
-  }
-  id_ = from.id_;
-  // @@protoc_insertion_point(copy_constructor:db.tb_Person2)
-}
-
-void tb_Person2::SharedCtor() {
-  _cached_size_ = 0;
-  name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  id_ = 1001;
-}
-
-tb_Person2::~tb_Person2() {
-  // @@protoc_insertion_point(destructor:db.tb_Person2)
-  SharedDtor();
-}
-
-void tb_Person2::SharedDtor() {
-  name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-void tb_Person2::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* tb_Person2::descriptor() {
-  ::protobuf_person_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_person_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const tb_Person2& tb_Person2::default_instance() {
-  ::protobuf_person_2eproto::InitDefaultstb_Person2();
-  return *internal_default_instance();
-}
-
-tb_Person2* tb_Person2::New(::google::protobuf::Arena* arena) const {
-  tb_Person2* n = new tb_Person2;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void tb_Person2::Clear() {
-// @@protoc_insertion_point(message_clear_start:db.tb_Person2)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 3u) {
-    if (cached_has_bits & 0x00000001u) {
-      GOOGLE_DCHECK(!name_.IsDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited()));
-      (*name_.UnsafeRawStringPointer())->clear();
-    }
-    id_ = 1001;
-  }
-  _has_bits_.Clear();
-  _internal_metadata_.Clear();
-}
-
-bool tb_Person2::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:db.tb_Person2)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional .db.MessageId id = 1 [default = MSGID_tb_Person2];
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::db::MessageId_IsValid(value)) {
-            set_id(static_cast< ::db::MessageId >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(
-                1, static_cast< ::google::protobuf::uint64>(value));
-          }
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // optional string name = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(18u /* 18 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_name()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->name().data(), static_cast<int>(this->name().length()),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "db.tb_Person2.name");
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:db.tb_Person2)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:db.tb_Person2)
-  return false;
-#undef DO_
-}
-
-void tb_Person2::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:db.tb_Person2)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional .db.MessageId id = 1 [default = MSGID_tb_Person2];
-  if (cached_has_bits & 0x00000002u) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->id(), output);
-  }
-
-  // optional string name = 2;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->name().data(), static_cast<int>(this->name().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "db.tb_Person2.name");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->name(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:db.tb_Person2)
-}
-
-::google::protobuf::uint8* tb_Person2::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
-  // @@protoc_insertion_point(serialize_to_array_start:db.tb_Person2)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _has_bits_[0];
-  // optional .db.MessageId id = 1 [default = MSGID_tb_Person2];
-  if (cached_has_bits & 0x00000002u) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->id(), target);
-  }
-
-  // optional string name = 2;
-  if (cached_has_bits & 0x00000001u) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->name().data(), static_cast<int>(this->name().length()),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "db.tb_Person2.name");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->name(), target);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:db.tb_Person2)
-  return target;
-}
-
-size_t tb_Person2::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:db.tb_Person2)
-  size_t total_size = 0;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  if (_has_bits_[0 / 32] & 3u) {
-    // optional string name = 2;
-    if (has_name()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->name());
-    }
-
-    // optional .db.MessageId id = 1 [default = MSGID_tb_Person2];
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->id());
-    }
-
-  }
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void tb_Person2::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:db.tb_Person2)
-  GOOGLE_DCHECK_NE(&from, this);
-  const tb_Person2* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const tb_Person2>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:db.tb_Person2)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:db.tb_Person2)
-    MergeFrom(*source);
-  }
-}
-
-void tb_Person2::MergeFrom(const tb_Person2& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:db.tb_Person2)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 3u) {
-    if (cached_has_bits & 0x00000001u) {
-      set_has_name();
-      name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
-    }
-    if (cached_has_bits & 0x00000002u) {
-      id_ = from.id_;
-    }
-    _has_bits_[0] |= cached_has_bits;
-  }
-}
-
-void tb_Person2::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:db.tb_Person2)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void tb_Person2::CopyFrom(const tb_Person2& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:db.tb_Person2)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool tb_Person2::IsInitialized() const {
-  return true;
-}
-
-void tb_Person2::Swap(tb_Person2* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void tb_Person2::InternalSwap(tb_Person2* other) {
-  using std::swap;
-  name_.Swap(&other->name_);
-  swap(id_, other->id_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata tb_Person2::GetMetadata() const {
   protobuf_person_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_person_2eproto::file_level_metadata[kIndexInFileMessages];
 }
