@@ -84,7 +84,7 @@ public:
 
         for ( int i  = 0; i   < argLen ; i++ )
         {
-            if ( i < argLen )
+            if ( i < argLen - 1)
             {
                 format << " {}, ";
             }
@@ -116,7 +116,7 @@ public:
 
         for ( int i  = 0; i   < argLen ; i++ )
         {
-            if ( i < argLen )
+            if ( i < argLen - 1)
             {
                 format << " {}, ";
             }
@@ -233,7 +233,7 @@ public:
 
         for ( int i  = 0; i   < argLen ; i++ )
         {
-            if ( i < argLen )
+            if ( i < argLen - 1)
             {
                 format << " {}, ";
             }
@@ -262,7 +262,7 @@ public:
 
         for ( int i  = 0; i   < argLen  ; i++ )
         {
-            if ( i < argLen )
+            if ( i < argLen - 1)
             {
                 format << " {}, ";
             }
