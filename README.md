@@ -18,6 +18,8 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 
 ## Intro
 dmorm
+修改src/person.proto 执行build_person.bat即可 person.orm.h 为自动生成的orm映射文件.
+
 ```cpp
 #include <iostream>
 #include "person.dm.h"
