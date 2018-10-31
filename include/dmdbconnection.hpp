@@ -2,7 +2,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
-#include "resultset.hpp"
+#include "dmresultset.hpp"
 
 namespace gdp
 {

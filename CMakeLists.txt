@@ -49,23 +49,23 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-FILE(GLOB DMDBTEST_SOURCES
+FILE(GLOB DMORMTEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/person.pb.cc)
 
 IF (WIN32)
-    ADD_EXECUTABLE(dmdbtest ${DMDBTEST_SOURCES})
+    ADD_EXECUTABLE(dmormtest ${DMORMTEST_SOURCES})
 
-    TARGET_LINK_LIBRARIES(dmdbtest libmysql libprotoc libprotobuf)
+    TARGET_LINK_LIBRARIES(dmormtest libmysql libprotoc libprotobuf)
    
     ADD_CUSTOM_COMMAND(
-	TARGET dmdbtest
+	TARGET dmormtest
 	PRE_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/mysql-win/lib/libmysql.dll
-	$<TARGET_FILE_DIR:dmdbtest>
+	$<TARGET_FILE_DIR:dmormtest>
     )
 ELSE(WIN32)
-    ADD_EXECUTABLE(dmdbtest ${DMDBTEST_SOURCES})
-    TARGET_LINK_LIBRARIES(dmdbtest ${MYSQL_LIBRARIES} libprotoc libprotobuf)
+    ADD_EXECUTABLE(dmormtest ${DMORMTEST_SOURCES})
+    TARGET_LINK_LIBRARIES(dmormtest ${MYSQL_LIBRARIES} libprotoc libprotobuf)
 ENDIF(WIN32)

@@ -22,8 +22,8 @@
 #include "dmformat.h"
 #include <functional>
 //#include "sqlutils.h"
-#include "dbquery.hpp"
-#include "dbconnection.hpp"
+#include "dmdbquery.hpp"
+#include "dmdbconnection.hpp"
 
 namespace gdp
 {

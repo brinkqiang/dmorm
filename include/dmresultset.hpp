@@ -9,7 +9,7 @@
 #include "mysql/mysql.h"
 #endif
 
-#include "logger.hpp"
+#include "dmlogger.hpp"
 
 
 namespace gdp
