@@ -22,12 +22,13 @@ dmorm
 ```
 1. windows
 修改src/person.proto 执行build_person.bat即可 person.orm.h 为自动生成的orm映射文件.
+命令行安装好cmake之后执行build.bat 即可生成vs工程
 2. 类unix
 修改src/person.proto 执行build_person.sh即可 person.orm.h 为自动生成的orm映射文件.
+直接bash build.sh即可
 3. 生成工具dmgen4pborm源码地址如下
 https://github.com/brinkqiang/dmgen4pborm
 ```
-
 
 ```cpp
 #include <iostream>
