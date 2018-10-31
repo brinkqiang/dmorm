@@ -20,7 +20,7 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 dmorm
 
 ```
-1. windouws
+1. windows
 修改src/person.proto 执行build_person.bat即可 person.orm.h 为自动生成的orm映射文件.
 2. 类unix
 修改src/person.proto 执行build_person.sh即可 person.orm.h 为自动生成的orm映射文件.
