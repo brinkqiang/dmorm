@@ -22,14 +22,14 @@ ELSEIF (UNIX)
     SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread" )    
 ENDIF ()
 
-ADD_SUBDIRECTORY(thirdparty/dmprotobuf/cmake)
+ADD_SUBDIRECTORY(thirdparty/dmgen4pborm)
 
 IF (WIN32)
-    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dmprotobuf/src/windows)
+    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dmgen4pborm/thirdparty/dmprotobuf/src/windows)
 ENDIF(WIN32)
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dmprotobuf/src)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dmprotobuf)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dmgen4pborm/thirdparty/dmprotobuf/src)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/dmgen4pborm/thirdparty/dmprotobuf)
 
 IF (WIN32)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/mysql-win/include/mysql)
