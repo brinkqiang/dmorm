@@ -1,0 +1,7 @@
+<coder name="FORMAT" package="" version="1_0">
+    <errors>
+        <error name="FORMAT_ERR_OK"                    id="0" info="OK" des="操作成功错误码" />
+        <error name="FORMAT_ERR_NG"                    id="1" info="NG" des="常规失败错误码" />
+        <error name="FORMAT_ERR_NET_CONNECT"           id="1000" info="host:{0} port:{1} connect failed. " des="主机:{0} 端口:{1} 连接失败" />
+    </errors>
+</coder>
