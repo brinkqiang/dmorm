@@ -1,9 +1,7 @@
 #ifndef __PERSON_ORM_H_INCLUDE__
 #define __PERSON_ORM_H_INCLUDE__
 
-#include "dmgdb.hpp"
-#include "dmdbquery.hpp"
-#include "dmformat.h"
+#include "db_policy.h"
 
 #include "person.pb.h"
 
