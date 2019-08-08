@@ -31,7 +31,7 @@ matrix:
           addons:
             apt:
               sources: 
-              packages: ['cmake', 'autoconf', 'automake', 'gcc-7', 'g++-7', 'clang-5.0']
+              packages: ['cmake', 'autoconf', 'automake', 'gcc-7', 'g++-7', 'clang-5.0', 'mysql',]
 
 install:
   - cmake --version

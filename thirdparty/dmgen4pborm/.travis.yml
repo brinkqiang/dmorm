@@ -79,7 +79,7 @@ script:
   - cd ..
 
 after_success:
-  - "if [ -f bin/dmgen4pborm ] ; then bin/dmgen4pborm ; fi"
+  - echo success
 
 after_failure:
   - echo failure
