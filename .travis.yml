@@ -22,7 +22,7 @@ matrix:
               # List of whitelisted in travis apt-sources:
               #   https://github.com/travis-ci/apt-source-whitelist/blob/master/ubuntu.json
               sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-trusty-5.0']
-              packages: ['cmake', 'autoconf', 'automake', 'gcc-7', 'g++-7', 'clang-5.0', 'mysql']
+              packages: ['cmake', 'autoconf', 'automake', 'gcc-7', 'g++-7', 'clang-5.0']
 
 install:
   - cmake --version
