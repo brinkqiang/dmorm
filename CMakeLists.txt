@@ -23,7 +23,7 @@ IF (WIN32)
     PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/mysql/lib/libmysql.dll
-    $<TARGET_FILE_DIR:luamysql>
+    $<TARGET_FILE_DIR:dmormtest>
     )
 ELSE(WIN32)
     ADD_EXECUTABLE(dmormtest ${DMORMTEST_SOURCES})
