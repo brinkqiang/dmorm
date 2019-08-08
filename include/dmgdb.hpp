@@ -14,7 +14,7 @@
 #ifdef WIN32
 #include "mysql.h"
 #else
-#include "mysql/mysql.h"
+#include <mysql/mysql.h>
 #endif
 
 #include <iostream>
