@@ -52,13 +52,13 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <io.h>
+#include <memory>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wctype.h>
 #include <windows.h>
 
 #include <google/protobuf/stubs/io_win32.h>
-#include <google/protobuf/stubs/scoped_ptr.h>
 
 #include <memory>
 #include <sstream>
@@ -151,12 +151,13 @@ wstring normalize(wstring path) {
 
   static const wstring dot(L".");
   static const wstring dotdot(L"..");
+  const WCHAR* p = path.c_str();
 
   std::vector<wstring> segments;
   int segment_start = -1;
   // Find the path segments in `path` (separated by "/").
   for (int i = 0;; ++i) {
-    if (!is_separator(path[i]) && path[i] != L'\0') {
+    if (!is_separator(p[i]) && p[i] != L'\0') {
       // The current character does not end a segment, so start one unless it's
       // already started.
       if (segment_start < 0) {
@@ -165,7 +166,7 @@ wstring normalize(wstring path) {
     } else if (segment_start >= 0 && i > segment_start) {
       // The current character is "/" or "\0", so this ends a segment.
       // Add that to `segments` if there's anything to add; handle "." and "..".
-      wstring segment(path, segment_start, i - segment_start);
+      wstring segment(p, segment_start, i - segment_start);
       segment_start = -1;
       if (segment == dotdot) {
         if (!segments.empty() &&
@@ -176,7 +177,7 @@ wstring normalize(wstring path) {
         segments.push_back(segment);
       }
     }
-    if (path[i] == L'\0') {
+    if (p[i] == L'\0') {
       break;
     }
   }
@@ -199,7 +200,7 @@ wstring normalize(wstring path) {
     result << segments[i];
   }
   // Preserve trailing separator if the input contained it.
-  if (!path.empty() && is_separator(path[path.size() - 1])) {
+  if (!path.empty() && is_separator(p[path.size() - 1])) {
     result << L'\\';
   }
   return result.str();
@@ -228,7 +229,7 @@ bool as_windows_path(const char* path, wstring* result) {
     if (size == 0 && GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
       return false;
     }
-    scoped_array<WCHAR> wcwd(new WCHAR[size]);
+    std::unique_ptr<WCHAR[]> wcwd(new WCHAR[size]);
     ::GetCurrentDirectoryW(size, wcwd.get());
     wpath = join_paths(wcwd.get(), wpath);
   }
@@ -370,7 +371,7 @@ bool wcs_to_mbs(const WCHAR* s, string* out, bool outUtf8) {
       || usedDefaultChar) {
     return false;
   }
-  scoped_array<CHAR> astr(new CHAR[size]);
+  std::unique_ptr<CHAR[]> astr(new CHAR[size]);
   WideCharToMultiByte(
       outUtf8 ? CP_UTF8 : CP_ACP, 0, s, -1, astr.get(), size, NULL, NULL);
   out->assign(astr.get());
@@ -389,7 +390,7 @@ bool mbs_to_wcs(const char* s, wstring* out, bool inUtf8) {
   if (size == 0 && GetLastError() != ERROR_INSUFFICIENT_BUFFER) {
     return false;
   }
-  scoped_array<WCHAR> wstr(new WCHAR[size]);
+  std::unique_ptr<WCHAR[]> wstr(new WCHAR[size]);
   MultiByteToWideChar(
       inUtf8 ? CP_UTF8 : CP_ACP, 0, s, -1, wstr.get(), size + 1);
   out->assign(wstr.get());

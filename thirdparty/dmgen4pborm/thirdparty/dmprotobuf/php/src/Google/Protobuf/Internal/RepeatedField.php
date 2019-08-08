@@ -59,6 +59,10 @@ class RepeatedField implements \ArrayAccess, \IteratorAggregate, \Countable
      * @ignore
      */
     private $klass;
+    /**
+     * @ignore
+     */
+    private $legacy_klass;
 
     /**
      * Constructs an instance of RepeatedField.
@@ -71,7 +75,16 @@ class RepeatedField implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         $this->container = [];
         $this->type = $type;
-        $this->klass = $klass;
+        if ($this->type == GPBType::MESSAGE) {
+            $pool = DescriptorPool::getGeneratedPool();
+            $desc = $pool->getDescriptorByClassName($klass);
+            if ($desc == NULL) {
+                new $klass;  // No msg class instance has been created before.
+                $desc = $pool->getDescriptorByClassName($klass);
+            }
+            $this->klass = $desc->getClass();
+            $this->legacy_klass = $desc->getLegacyClass();
+        }
     }
 
     /**
@@ -88,6 +101,14 @@ class RepeatedField implements \ArrayAccess, \IteratorAggregate, \Countable
     public function getClass()
     {
         return $this->klass;
+    }
+
+    /**
+     * @ignore
+     */
+    public function getLegacyClass()
+    {
+        return $this->legacy_klass;
     }
 
     /**
@@ -120,15 +141,22 @@ class RepeatedField implements \ArrayAccess, \IteratorAggregate, \Countable
     public function offsetSet($offset, $value)
     {
         switch ($this->type) {
+            case GPBType::SFIXED32:
+            case GPBType::SINT32:
             case GPBType::INT32:
+            case GPBType::ENUM:
                 GPBUtil::checkInt32($value);
                 break;
+            case GPBType::FIXED32:
             case GPBType::UINT32:
                 GPBUtil::checkUint32($value);
                 break;
+            case GPBType::SFIXED64:
+            case GPBType::SINT64:
             case GPBType::INT64:
                 GPBUtil::checkInt64($value);
                 break;
+            case GPBType::FIXED64:
             case GPBType::UINT64:
                 GPBUtil::checkUint64($value);
                 break;
@@ -140,6 +168,9 @@ class RepeatedField implements \ArrayAccess, \IteratorAggregate, \Countable
                 break;
             case GPBType::BOOL:
                 GPBUtil::checkBool($value);
+                break;
+            case GPBType::BYTES:
+                GPBUtil::checkString($value, false);
                 break;
             case GPBType::STRING:
                 GPBUtil::checkString($value, true);

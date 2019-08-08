@@ -1,61 +1,39 @@
-version: 1.1.0.{build}
-image: 
-# - Visual Studio 2015
-  - Visual Studio 2017
+platform:
+  - Win64
+
 configuration:
-- Debug
-# - Release
+  - Debug
 
 environment:
   matrix:
-  # - VS_VERSION: 9 2008
-  #   VS_PLATFORM: win32
-  # - VS_VERSION: 9 2008
-  #   VS_PLATFORM: x64
-  #- VS_VERSION: 10 2010
-  #  VS_PLATFORM: win32
-  #- VS_VERSION: 10 2010
-  #  VS_PLATFORM: x64
-  # - VS_VERSION: 11 2012
-  #   VS_PLATFORM: win32
-  # - VS_VERSION: 11 2012
-  #   VS_PLATFORM: x64
-  #- VS_VERSION: 12 2013
-  #  VS_PLATFORM: win32
-  #- VS_VERSION: 12 2013
-  #  VS_PLATFORM: x64
-   - VS_VERSION: 14 2015
-     VS_PLATFORM: win32
-   - VS_VERSION: 14 2015
-     VS_PLATFORM: x64
-  # - VS_VERSION: 15 2017
-  #   VS_PLATFORM: win32
-  # - VS_VERSION: 15 2017
-  #   VS_PLATFORM: x64
+    - language: cpp
+      image: Visual Studio 2015
+      BUILD_DLL: ON
+      UNICODE: ON
+
+    - language: cpp
+      image: Visual Studio 2017
+      BUILD_DLL: OFF
+      UNICODE: ON
+
+    - language: csharp
+      image: Visual Studio 2017
+
+# Our build scripts run tests automatically; we don't want AppVeyor
+# to try to detect them itself.
+test: off
+
+install:
+  - git submodule update --init --recursive
+
 before_build:
-- git submodule update --init --recursive
-- cmake -Hcmake -Bcmake/build -G "Visual Studio %VS_VERSION%" -DCMAKE_GENERATOR_PLATFORM=%VS_PLATFORM% -Dprotobuf_BUILD_TESTS=OFF
+  - if %platform%==Win32 set generator=Visual Studio 14
+  - if %platform%==Win64 set generator=Visual Studio 14 Win64
+  - if %platform%==Win32 set vcplatform=Win32
+  - if %platform%==Win64 set vcplatform=x64
 
-build:
-  project: cmake/build/protobuf.sln
-  parallel: true
-  verbosity: minimal
+build_script:
+  - CALL appveyor.bat
 
-test_script:
-# Environment variables https://www.appveyor.com/docs/environment-variables/
-- echo %APPVEYOR_REPO_NAME%
-- echo %APPVEYOR_PROJECT_NAME%
-- echo %APPVEYOR_ACCOUNT_NAME%
-
-#deploy:
-#  release: "%APPVEYOR_PROJECT_NAME%-v%APPVEYOR_BUILD_VERSION%"
-#  description: 'Release description'
-#  provider: GitHub
-#  auth_token:
-#    secure: "%GITHUB_ACCESS_TOKEN%"
-#  artifact: bin\*\*.exe bin\*\*.pdb
-#  draft: false
-#  prerelease: false
-#  on:
-#    branch: master                 # release from master branch only
-#    appveyor_repo_tag: false        # deploy on tag push only
+skip_commits:
+  message: /.*\[skip appveyor\].*/
