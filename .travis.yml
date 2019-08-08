@@ -63,7 +63,7 @@ script:
   - cd ..
 
 after_success:
-  - "if [ -f bin/dmormtest ] ; then bin/dmormtest ; fi"
+  - echo success
 
 after_failure:
   - echo failure
