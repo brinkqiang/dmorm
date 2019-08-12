@@ -27,6 +27,7 @@ dmorm
 修改src/person.proto 执行build_person.sh即可 person.orm.h 为自动生成的orm映射文件.  
 直接bash build.sh即可  
 ### 3. 生成工具dmgen4pborm
+dmgen4pborm --cpp_out=. person.proto
 
 ```cpp
 #include <iostream>
