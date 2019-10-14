@@ -49,3 +49,25 @@ ADD_CUSTOM_COMMAND(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/build_person.bat
     $<TARGET_FILE_DIR:dmgen4pborm>
 )
+
+IF (WIN32)
+    ADD_CUSTOM_TARGET(
+        dmgen4pborm_config
+        COMMAND echo "dmgen4pborm_config"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+ELSEIF (APPLE)
+    ADD_CUSTOM_TARGET(
+        dmgen4pborm_config
+        COMMAND glibtoolize && aclocal && autoheader && autoconf && automake --add-missing && sh configure
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+ELSEIF (UNIX)
+    ADD_CUSTOM_TARGET(
+        dmgen4pborm_config
+        COMMAND libtoolize && aclocal && autoheader && autoconf && automake --add-missing && sh configure
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+ENDIF()
+
+ADD_DEPENDENCIES(dmgen4pborm dmgen4pborm_config)
