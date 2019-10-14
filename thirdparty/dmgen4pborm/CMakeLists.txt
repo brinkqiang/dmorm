@@ -10,7 +10,7 @@ ADD_DEFINITIONS(-DCTEMPLATE_DLL_DECL=)
 
 ModuleInclude("dmprotobuf" "thirdparty/dmprotobuf")
 
-ModuleImport("ctemplate" "thirdparty/ctemplate")
+ModuleImport("dmtemplate" "thirdparty/dmtemplate")
 ModuleImport("dmprotobuf" "thirdparty/dmprotobuf")
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -24,7 +24,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/src/tpl/*.h)
 
 ADD_EXECUTABLE(dmgen4pborm ${SOURCES})
-TARGET_LINK_LIBRARIES(dmgen4pborm ctemplate libprotoc libprotobuf-lite)
+TARGET_LINK_LIBRARIES(dmgen4pborm dmtemplate libprotoc libprotobuf-lite)
 
 ADD_CUSTOM_COMMAND(
     TARGET dmgen4pborm
@@ -49,25 +49,3 @@ ADD_CUSTOM_COMMAND(
     ${CMAKE_CURRENT_SOURCE_DIR}/test/build_person.bat
     $<TARGET_FILE_DIR:dmgen4pborm>
 )
-
-IF (WIN32)
-    ADD_CUSTOM_TARGET(
-        dmgen4pborm_config
-        COMMAND echo "dmgen4pborm_config"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        )
-ELSEIF (APPLE)
-    ADD_CUSTOM_TARGET(
-        dmgen4pborm_config
-        COMMAND glibtoolize && aclocal && autoheader && autoconf && automake --add-missing && sh configure
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        )
-ELSEIF (UNIX)
-    ADD_CUSTOM_TARGET(
-        dmgen4pborm_config
-        COMMAND libtoolize && aclocal && autoheader && autoconf && automake --add-missing && sh configure
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        )
-ENDIF()
-
-ADD_DEPENDENCIES(dmgen4pborm dmgen4pborm_config)
