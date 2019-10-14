@@ -16,11 +16,6 @@
 # sh configure
 # popd
 
-pushd thirdparty/dmgen4pborm/thirdparty/ctemplate
-libtoolize && aclocal && autoheader && autoconf && automake --add-missing
-sh configure
-popd
-
 rm -rf build
 mkdir build
 pushd build
