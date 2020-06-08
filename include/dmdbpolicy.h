@@ -6,4 +6,6 @@
 #include "dmdbquery.hpp"
 #include "dmformat.h"
 
+typedef gdp::db::DBQuery DMDBQuery;
+
 #endif // __DB_POLICY_H_INCLUDE__

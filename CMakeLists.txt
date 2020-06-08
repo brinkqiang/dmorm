@@ -5,7 +5,9 @@ LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 INCLUDE(cmake/ModuleImport.cmake)
 INCLUDE(cmake/ModuleCompileOptions.cmake)
 ModuleSetCompileOptions()
+ModuleSetWinCompilerFlags()
 
+ModuleImport("dmformat" "thirdparty/dmformat")
 ModuleImport("dmgen4pborm" "thirdparty/dmgen4pborm")
 ModuleImport2("mysql" "thirdparty/mysql")
 

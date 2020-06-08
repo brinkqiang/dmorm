@@ -1,7 +1,7 @@
 #ifndef __{{DMPROTO_NAME_UP}}_ORM_H_INCLUDE__
 #define __{{DMPROTO_NAME_UP}}_ORM_H_INCLUDE__
 
-#include "db_policy.h"
+#include "dmdbpolicy.h"
 
 #include "{{DMPROTO_NAME}}.pb.h"
 

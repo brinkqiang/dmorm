@@ -1,7 +1,7 @@
 #ifndef __PERSON_ORM_H_INCLUDE__
 #define __PERSON_ORM_H_INCLUDE__
 
-#include "db_policy.h"
+#include "dmdbpolicy.h"
 
 #include "person.pb.h"
 

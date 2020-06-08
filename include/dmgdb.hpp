@@ -19,9 +19,9 @@
 
 #include <iostream>
 #include <map>
-#include "dmformat.h"
 #include <functional>
-//#include "sqlutils.h"
+#include <thread>
+#include "dmformat.h"
 #include "dmdbquery.hpp"
 #include "dmdbconnection.hpp"
 
@@ -187,8 +187,7 @@ public:
     template<typename ... Args>
     bool execute( const char* format, const Args& ... args )
     {
-        fmt::MemoryWriter statement;
-        statement.write( format, args... );
+        std::string statement = fmt::format( format, args... );
 
         if ( !is_valid() )
         {
@@ -234,5 +233,11 @@ private:
     std::string m_db;
     DBConfig m_default;
 };
+
+static DBQuery& GetQuery()
+{
+    static thread_local DBQuery g_oQuery;
+    return g_oQuery;
+}
 }
 }
