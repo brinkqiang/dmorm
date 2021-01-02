@@ -69,5 +69,7 @@ int main()
             std::cout << datas[i].DebugString() << std::endl;
         }
     }
+
+    fmt::print("Done\n");
     return 0;
 }
