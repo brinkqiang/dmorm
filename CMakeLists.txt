@@ -28,6 +28,7 @@ IF (WIN32)
     $<TARGET_FILE_DIR:dmormtest>
     )
 ELSE(WIN32)
+    find_package(mysql)
     ADD_EXECUTABLE(dmormtest ${DMORMTEST_SOURCES})
     TARGET_LINK_LIBRARIES(dmormtest ${MYSQL_LIBRARIES} libprotoc libprotobuf-lite)
 ENDIF(WIN32)
