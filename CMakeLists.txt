@@ -23,5 +23,5 @@ IF (WIN32)
     $<TARGET_FILE_DIR:dmormtest>
     )
 ELSE(WIN32)
-    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite;libgo_static")
+    ExeImport("test" "${MYSQL_LIBRARIES};libprotoc;libprotobuf-lite;libgo_static")
 ENDIF(WIN32)
