@@ -9,17 +9,12 @@ ModuleSetWinCompilerFlags()
 
 ModuleImport("dmformat" "thirdparty/dmformat")
 ModuleImport("dmgen4pborm" "thirdparty/dmgen4pborm")
+ModuleImport("dmlibgo" "thirdparty/dmlibgo")
 ModuleImport2("mysql" "thirdparty/mysql")
 
-FILE(GLOB DMORMTEST_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/person.pb.cc)
-
 IF (WIN32)
-    ADD_EXECUTABLE(dmormtest ${DMORMTEST_SOURCES})
 
-    TARGET_LINK_LIBRARIES(dmormtest libmysql libprotoc libprotobuf-lite)
-
+    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite;libgo_static")
     ADD_CUSTOM_COMMAND(
     TARGET dmormtest
     PRE_BUILD
@@ -28,7 +23,5 @@ IF (WIN32)
     $<TARGET_FILE_DIR:dmormtest>
     )
 ELSE(WIN32)
-    find_package(mysql)
-    ADD_EXECUTABLE(dmormtest ${DMORMTEST_SOURCES})
-    TARGET_LINK_LIBRARIES(dmormtest ${MYSQL_LIBRARIES} libprotoc libprotobuf-lite)
+    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite;libgo_static")
 ENDIF(WIN32)
