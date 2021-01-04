@@ -23,5 +23,10 @@ IF (WIN32)
     $<TARGET_FILE_DIR:dmormtest>
     )
 ELSE(WIN32)
-    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite;libgo_static")
+    set(Boost_USE_STATIC_LIBS ON)
+    find_package(Boost REQUIRED COMPONENTS context)
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+
+    ExeImport("test" "${MYSQL_LIBRARIES};libprotoc;libprotobuf-lite;libgo_static")
 ENDIF(WIN32)
