@@ -1,3 +1,0 @@
-namespace co {
-    void initHook() {}
-}

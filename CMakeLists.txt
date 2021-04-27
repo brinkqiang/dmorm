@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 
 PROJECT(dmorm)
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -9,12 +9,11 @@ ModuleSetWinCompilerFlags()
 
 ModuleImport("dmformat" "thirdparty/dmformat")
 ModuleImport("dmgen4pborm" "thirdparty/dmgen4pborm")
-ModuleImport("dmlibgo" "thirdparty/dmlibgo")
 ModuleImport2("mysql" "thirdparty/mysql")
 
 IF (WIN32)
 
-    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite;libgo_static")
+    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite")
     ADD_CUSTOM_COMMAND(
     TARGET dmormtest
     PRE_BUILD
@@ -31,5 +30,5 @@ ELSE(WIN32)
         #endif()
     #endif()
 
-    ExeImport("test" "${MYSQL_LIBRARIES};libprotoc;libprotobuf-lite;libgo")
+    ExeImport("test" "${MYSQL_LIBRARIES};libprotoc;libprotobuf-lite")
 ENDIF(WIN32)
