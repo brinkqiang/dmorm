@@ -8,7 +8,7 @@ ModuleSetCompileOptions()
 ModuleSetWinCompilerFlags()
 
 ModuleImport("dmformat" "thirdparty/dmformat")
-ModuleImport("dmgen4pborm" "thirdparty/dmgen4pborm")
+ModuleImport("dmprotobuf" "thirdparty/dmprotobuf")
 ModuleImport2("mysql" "thirdparty/mysql")
 
 IF (WIN32)
