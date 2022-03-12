@@ -2,11 +2,12 @@
 #include <iostream>
 #include "dmgdb.hpp"
 #include "person.orm.h"
+#include "dmsnowflake.h"
 
 uint64_t NextID()
 {
-    static uint64_t NextID = time(0);
-    return NextID++;
+    static CDMIDGenerator gGen(0, 0);
+    return gGen.GetNextID();
 }
 
 int main()
@@ -32,7 +33,7 @@ int main()
         std::vector<db::tb_Person> datas;
         oPerson.Select(data, datas);
 
-        for (int i=0; i < datas.size(); ++i)
+        for (int i = 0; i < datas.size(); ++i)
         {
             std::cout << datas[i].DebugString() << std::endl;
         }
