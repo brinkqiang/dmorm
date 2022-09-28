@@ -1,0 +1,15 @@
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+
+src/defines.h
+src/gflags_completions.h
+src/gflags_declare.h
+src/gflags_gflags.h
+src/gflags.h
