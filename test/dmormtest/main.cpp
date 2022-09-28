@@ -3,6 +3,7 @@
 #include "dmgdb.hpp"
 #include "person.orm.h"
 #include "dmsnowflake.h"
+#include "dmflags.h"
 
 uint64_t NextID()
 {
@@ -10,9 +11,14 @@ uint64_t NextID()
     return gGen.GetNextID();
 }
 
-int main()
+DEFINE_string(USER_NAME, "root", "root");
+DEFINE_string(PASS_WORD, "000000", "000000");
+
+int main(int argc, char** argv)
 {
-    GDb oGDB("127.0.0.1", 3306, "root", "000000");
+    DMFLAGS_INIT(argc, argv);
+
+    GDb oGDB("127.0.0.1", 3306, FLAGS_USER_NAME, FLAGS_PASS_WORD);
     oGDB.init("");
 
     DBQuery oQuery;
