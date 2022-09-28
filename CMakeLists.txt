@@ -7,13 +7,14 @@ INCLUDE(cmake/ModuleCompileOptions.cmake)
 ModuleSetCompileOptions()
 ModuleSetWinCompilerFlags()
 
+ModuleImport("dmflags" "thirdparty/dmflags")
 ModuleImport("dmformat" "thirdparty/dmformat")
 ModuleImport("dmprotobuf" "thirdparty/dmprotobuf")
 ModuleImport2("mysql" "thirdparty/mysql")
 
 IF (WIN32)
 
-    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite")
+    ExeImport("test" "libmysql;libprotoc;libprotobuf-lite;dmflags")
     ADD_CUSTOM_COMMAND(
     TARGET dmormtest
     PRE_BUILD
@@ -30,5 +31,5 @@ ELSE(WIN32)
         #endif()
     #endif()
 
-    ExeImport("test" "${MYSQL_LIBRARIES};libprotoc;libprotobuf-lite")
+    ExeImport("test" "${MYSQL_LIBRARIES};libprotoc;libprotobuf-lite;dmflags")
 ENDIF(WIN32)
