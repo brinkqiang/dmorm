@@ -11,8 +11,8 @@ uint64_t NextID()
     return gGen.GetNextID();
 }
 
-DEFINE_string(USER_NAME, "root", "root");
-DEFINE_string(PASS_WORD, "000000", "000000");
+DEFINE_string(u, "root", "root");
+DEFINE_string(p, "000000", "000000");
 
 int main(int argc, char** argv)
 {
