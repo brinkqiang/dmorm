@@ -17,6 +17,11 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 ## Intro
 dmorm
 
+用法
+```
+dmormtest -u=root -p=000000
+```
+
 ### 1. windows
 修改src/person.proto 执行build_person.bat即可 person.orm.h 为自动生成的orm映射文件.  
 命令行安装好cmake之后执行build.bat 即可生成vs工程  
