@@ -36,16 +36,23 @@ dmgen4pborm --cpp_out=. person.proto
 #include <iostream>
 #include "dmgdb.hpp"
 #include "person.orm.h"
+#include "dmsnowflake.h"
+#include "dmflags.h"
 
 uint64_t NextID()
 {
-    static uint64_t NextID = time(0);
-    return NextID++;
+    static CDMIDGenerator gGen(0, 0);
+    return gGen.GetNextID();
 }
 
-int main()
+DEFINE_string(u, "root", "root");
+DEFINE_string(p, "000000", "000000");
+
+int main(int argc, char** argv)
 {
-    GDb oGDB("127.0.0.1", 3306, "root", "000000");
+    DMFLAGS_INIT(argc, argv);
+
+    GDb oGDB("127.0.0.1", 3306, FLAGS_USER_NAME, FLAGS_PASS_WORD);
     oGDB.init("");
 
     DBQuery oQuery;
@@ -66,7 +73,7 @@ int main()
         std::vector<db::tb_Person> datas;
         oPerson.Select(data, datas);
 
-        for (int i=0; i < datas.size(); ++i)
+        for (int i = 0; i < datas.size(); ++i)
         {
             std::cout << datas[i].DebugString() << std::endl;
         }
@@ -103,6 +110,8 @@ int main()
             std::cout << datas[i].DebugString() << std::endl;
         }
     }
+
+    fmt::print("Done\n");
     return 0;
 }
 
