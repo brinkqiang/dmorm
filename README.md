@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 {
     DMFLAGS_INIT(argc, argv);
 
-    GDb oGDB("127.0.0.1", 3306, FLAGS_USER_NAME, FLAGS_PASS_WORD);
+    GDb oGDB("127.0.0.1", 3306, FLAGS_u, FLAGS_p);
     oGDB.init("");
 
     DBQuery oQuery;
