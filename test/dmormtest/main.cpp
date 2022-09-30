@@ -11,14 +11,16 @@ uint64_t NextID()
     return gGen.GetNextID();
 }
 
-DEFINE_string(u, "root", "root");
-DEFINE_string(p, "000000", "000000");
+DEFINE_string(ip, "127.0.0.1", "127.0.0.1");
+DEFINE_string(user, "root", "root");
+DEFINE_string(pass, "000000", "000000");
+DEFINE_int32(port, 3306, "3306");
 
 int main(int argc, char** argv)
 {
     DMFLAGS_INIT(argc, argv);
 
-    GDb oGDB("127.0.0.1", 3306, FLAGS_USER_NAME, FLAGS_PASS_WORD);
+    GDb oGDB(FLAGS_ip, FLAGS_port, FLAGS_user, FLAGS_pass);
     oGDB.init("");
 
     DBQuery oQuery;
