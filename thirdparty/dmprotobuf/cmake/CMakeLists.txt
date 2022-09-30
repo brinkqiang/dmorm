@@ -126,8 +126,8 @@ endif()
 
 add_definitions(-DGOOGLE_PROTOBUF_CMAKE_BUILD)
 
-find_package(Threads REQUIRED)
-if (CMAKE_USE_PTHREADS_INIT)
+find_package(Threads)
+if (Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
   add_definitions(-DHAVE_PTHREAD)
 endif (CMAKE_USE_PTHREADS_INIT)
 
