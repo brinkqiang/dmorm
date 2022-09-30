@@ -24,6 +24,12 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H%M')"
 
+      - name: Install Package
+        shell: bash
+        run: |
+          brew update
+          brew install mysql-client
+
       - name: Create Build Environment
         run: cmake -E make_directory ${{runner.workspace}}/build
 

@@ -24,6 +24,11 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H%M')"
 
+      - name: Install Package
+        # https://community.chocolatey.org/packages
+        # run: |
+        # choco install mysql-connector
+
       - name: Create Build Environment
         run: cmake -E make_directory ${{runner.workspace}}/build
 
