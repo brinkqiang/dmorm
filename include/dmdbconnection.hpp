@@ -39,7 +39,7 @@ namespace gdp
                 mysql_thread_init();
 
                 //重连
-                my_bool reconnect = 1;
+                char reconnect = 1;
                 mysql_options(&m_mysql, MYSQL_OPT_RECONNECT, &reconnect);
                 //超时
                 mysql_options(&m_mysql, MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
