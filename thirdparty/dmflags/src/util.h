@@ -261,10 +261,10 @@ inline void MakeTmpdir(std::string* path) {
 #else
 inline void MakeTmpdir(std::string* path) {
   if (!path->empty()) {
-	int err = mkdir(path->c_str(), S_IRWXU | S_IRWXG | S_IXOTH);
+	int err = mkdir(path->c_str(), 0755);
 	if (err == 0 || errno == EEXIST) return;
   }
-  mkdir("/tmp/gflags_unittest", S_IRWXU | S_IRWXG | S_IXOTH);
+  mkdir("/tmp/gflags_unittest", 0755);
 }
 #endif
 
