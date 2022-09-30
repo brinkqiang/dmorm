@@ -1,4 +1,4 @@
-name: win
+name: win-2019
 
 on: [workflow_dispatch]
 
