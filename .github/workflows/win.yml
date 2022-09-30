@@ -12,6 +12,8 @@ jobs:
 
     strategy:
       matrix:
+        # https://docs.github.com/cn/actions/using-github-hosted-runners/about-github-hosted-runners#supported-software
+        # windows-2022 windows-2019
         os: [windows-latest]
 
     steps:
