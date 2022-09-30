@@ -23,7 +23,10 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H%M')"
 
       - name: Create Build Environment
-        run: cmake -E make_directory ${{runner.workspace}}/build
+        run: |
+          sudo apt -y install libmysqlclient-dev
+          sudo apt -y install mysql-client
+          cmake -E make_directory ${{runner.workspace}}/build
 
       - name: Configure CMake
         shell: bash
