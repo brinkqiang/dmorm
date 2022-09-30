@@ -113,7 +113,7 @@ public:
         if ( idx >= m_field_num )
         {
             std::cerr << "column index out of range" << std::endl;
-            return 0;
+            return "";
         }
 
         if ( m_row )
