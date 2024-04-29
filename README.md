@@ -22,8 +22,6 @@ Bash:
 dmormtest -user=root -pass=000000
 ```
 
-Use code with caution.
-content_copy
 Important: Use the provided credentials with caution, especially in a production environment.
 
 - Windows:
@@ -45,8 +43,7 @@ Bash:
 ```
 dmgen4pborm --cpp_out=. person.proto
 ```
-Use code with caution.
-content_copy
+
 This command generates the mapping file in your current directory (denoted by .) based on the person.proto file.
 
 ## Additional Notes:
