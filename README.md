@@ -13,22 +13,50 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 [win-link]:  https://github.com/brinkqiang/dmorm/actions/workflows/win.yml "win build status"
 
 ## Intro
-dmorm
+dmorm is a framework that simplifies working with relational databases by providing Object-Relational Mapping (ORM) functionality. This guide will explain how to install and use dmorm on both Windows and Linux.
 
-用法
+Usage:
+
+Bash:
 ```
 dmormtest -user=root -pass=000000
 ```
 
-### 1. windows
-修改src/person.proto 执行build_person.bat即可 person.orm.h 为自动生成的orm映射文件.  
-命令行安装好cmake之后执行build.bat 即可生成vs工程  
-注意: thirdparty/mysql下面的库为WIN64 如需WIN32请自行下载  
-### 2. linux
-修改src/person.proto 执行build_person.sh即可 person.orm.h 为自动生成的orm映射文件.  
-直接bash build.sh即可  
-### 3. 生成工具dmgen4pborm
+Use code with caution.
+content_copy
+Important: Use the provided credentials with caution, especially in a production environment.
+
+Windows:
+```
+Modify the src/person.proto file according to your needs.
+Run the build_person.bat script. This will generate the person.orm.h file, which acts as the automatically generated ORM mapping file.
+Make sure you have CMake installed before proceeding.
+After installing CMake, run the build.bat script again. This will generate a Visual Studio project for you to work with.
+Note: The libraries located in the thirdparty/mysql directory are specifically for WIN64 systems. If you need to use dmorm on a WIN32 system, you'll need to download the appropriate MySQL libraries yourself.
+```
+Linux:
+```
+Similar to Windows, modify the src/person.proto file to fit your data model.
+Run the build_person.sh script. This will also generate the person.orm.h file.
+Unlike Windows, you don't need any additional installations. Simply running bash build.sh in your terminal will handle everything.
+Generating ORM Mapping Files:
+```
+
+dmorm utilizes a tool called dmgen4pborm to generate ORM mapping files from Protocol Buffers files.
+
+Bash:
+```
 dmgen4pborm --cpp_out=. person.proto
+```
+Use code with caution.
+content_copy
+This command generates the mapping file in your current directory (denoted by .) based on the person.proto file.
+
+## Additional Notes:
+
+The thirdparty/mysql directory (Windows only) contains the MySQL libraries required by dmorm.
+For WIN32 compatibility, download the appropriate MySQL libraries yourself.
+The dmormtest tool allows you to test the dmorm framework by executing queries against your MySQL database.
 
 ```cpp
 
