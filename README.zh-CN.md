@@ -12,6 +12,8 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 [win-badge]: https://github.com/brinkqiang/dmorm/workflows/win/badge.svg "win build status"
 [win-link]:  https://github.com/brinkqiang/dmorm/actions/workflows/win.yml "win build status"
 
+**简体中文** · [English](./README..md)
+
 ## Intro
 dmorm
 
