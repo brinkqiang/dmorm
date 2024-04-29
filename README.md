@@ -46,11 +46,7 @@ dmgen4pborm --cpp_out=. person.proto
 
 This command generates the mapping file in your current directory (denoted by .) based on the person.proto file.
 
-## Additional Notes:
-
-The thirdparty/mysql directory (Windows only) contains the MySQL libraries required by dmorm.
-For WIN32 compatibility, download the appropriate MySQL libraries yourself.
-The dmormtest tool allows you to test the dmorm framework by executing queries against your MySQL database.
+## code
 
 ```cpp
 
