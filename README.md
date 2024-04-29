@@ -12,7 +12,7 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 [win-badge]: https://github.com/brinkqiang/dmorm/workflows/win/badge.svg "win build status"
 [win-link]:  https://github.com/brinkqiang/dmorm/actions/workflows/win.yml "win build status"
 
-**English** · [简体中文](./README.zh.md) 
+**English** · [简体中文](./README.zh-CN.md) 
 
 ## Intro
 dmorm is a framework that simplifies working with relational databases by providing Object-Relational Mapping (ORM) functionality. This guide will explain how to install and use dmorm on both Windows and Linux.
