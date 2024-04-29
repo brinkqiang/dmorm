@@ -19,7 +19,6 @@ dmorm is a framework that simplifies working with relational databases by provid
 
 Usage:
 
-Bash:
 ```
 dmormtest -user=root -pass=000000
 ```
@@ -41,7 +40,6 @@ Generating ORM Mapping Files:
 
 dmorm utilizes a tool called dmgen4pborm to generate ORM mapping files from Protocol Buffers files.
 
-Bash:
 ```
 dmgen4pborm --cpp_out=. person.proto
 ```
