@@ -26,21 +26,18 @@ Use code with caution.
 content_copy
 Important: Use the provided credentials with caution, especially in a production environment.
 
-Windows:
-```
+- Windows:
 Modify the src/person.proto file according to your needs.
 Run the build_person.bat script. This will generate the person.orm.h file, which acts as the automatically generated ORM mapping file.
 Make sure you have CMake installed before proceeding.
 After installing CMake, run the build.bat script again. This will generate a Visual Studio project for you to work with.
 Note: The libraries located in the thirdparty/mysql directory are specifically for WIN64 systems. If you need to use dmorm on a WIN32 system, you'll need to download the appropriate MySQL libraries yourself.
-```
-Linux:
-```
+
+- Linux:
 Similar to Windows, modify the src/person.proto file to fit your data model.
 Run the build_person.sh script. This will also generate the person.orm.h file.
 Unlike Windows, you don't need any additional installations. Simply running bash build.sh in your terminal will handle everything.
 Generating ORM Mapping Files:
-```
 
 dmorm utilizes a tool called dmgen4pborm to generate ORM mapping files from Protocol Buffers files.
 
