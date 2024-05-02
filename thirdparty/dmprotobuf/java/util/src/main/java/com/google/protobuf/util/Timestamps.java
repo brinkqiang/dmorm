@@ -1,32 +1,9 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
-// https://developers.google.com/protocol-buffers/
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
 
 package com.google.protobuf.util;
 
@@ -37,8 +14,12 @@ import static com.google.common.math.LongMath.checkedMultiply;
 import static com.google.common.math.LongMath.checkedSubtract;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.CompileTimeConstant;
+import com.google.j2objc.annotations.J2ObjCIncompatible;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Timestamp;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
@@ -46,6 +27,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import javax.annotation.Nullable;
 
 /**
  * Utilities to help create/manipulate {@code protobuf/timestamp.proto}. All operations throw an
@@ -59,11 +41,11 @@ public final class Timestamps {
   // Timestamp for "9999-12-31T23:59:59Z"
   static final long TIMESTAMP_SECONDS_MAX = 253402300799L;
 
-  static final long NANOS_PER_SECOND = 1000000000;
-  static final long NANOS_PER_MILLISECOND = 1000000;
-  static final long NANOS_PER_MICROSECOND = 1000;
-  static final long MILLIS_PER_SECOND = 1000;
-  static final long MICROS_PER_SECOND = 1000000;
+  static final int NANOS_PER_SECOND = 1000000000;
+  static final int NANOS_PER_MILLISECOND = 1000000;
+  static final int NANOS_PER_MICROSECOND = 1000;
+  static final int MILLIS_PER_SECOND = 1000;
+  static final int MICROS_PER_SECOND = 1000000;
 
   /** A constant holding the minimum valid {@link Timestamp}, {@code 0001-01-01T00:00:00Z}. */
   public static final Timestamp MIN_VALUE =
@@ -100,24 +82,25 @@ public final class Timestamps {
 
   private Timestamps() {}
 
-  private static final Comparator<Timestamp> COMPARATOR =
-      new Comparator<Timestamp>() {
-        @Override
-        public int compare(Timestamp t1, Timestamp t2) {
-          checkValid(t1);
-          checkValid(t2);
-          int secDiff = Long.compare(t1.getSeconds(), t2.getSeconds());
-          return (secDiff != 0) ? secDiff : Integer.compare(t1.getNanos(), t2.getNanos());
-        }
-      };
+  private static enum TimestampComparator implements Comparator<Timestamp>, Serializable {
+    INSTANCE;
+
+    @Override
+    public int compare(Timestamp t1, Timestamp t2) {
+      checkValid(t1);
+      checkValid(t2);
+      int secDiff = Long.compare(t1.getSeconds(), t2.getSeconds());
+      return (secDiff != 0) ? secDiff : Integer.compare(t1.getNanos(), t2.getNanos());
+    }
+  }
 
   /**
    * Returns a {@link Comparator} for {@link Timestamp Timestamps} which sorts in increasing
-   * chronological order. Nulls and invalid {@link Timestamp Timestamps} are not allowed (see
-   * {@link #isValid}).
+   * chronological order. Nulls and invalid {@link Timestamp Timestamps} are not allowed (see {@link
+   * #isValid}). The returned comparator is serializable.
    */
   public static Comparator<Timestamp> comparator() {
-    return COMPARATOR;
+    return TimestampComparator.INSTANCE;
   }
 
   /**
@@ -128,7 +111,7 @@ public final class Timestamps {
    *     and a value greater than {@code 0} if {@code x > y}
    */
   public static int compare(Timestamp x, Timestamp y) {
-    return COMPARATOR.compare(x, y);
+    return TimestampComparator.INSTANCE.compare(x, y);
   }
 
   /**
@@ -226,8 +209,8 @@ public final class Timestamps {
    *
    * <p>Example of accepted format: "1972-01-01T10:00:20.021-05:00"
    *
-   * @return A Timestamp parsed from the string.
-   * @throws ParseException if parsing fails.
+   * @return a Timestamp parsed from the string
+   * @throws ParseException if parsing fails
    */
   public static Timestamp parse(String value) throws ParseException {
     int dayOffset = value.indexOf('T');
@@ -277,8 +260,70 @@ public final class Timestamps {
     try {
       return normalizedTimestamp(seconds, nanos);
     } catch (IllegalArgumentException e) {
-      throw new ParseException("Failed to parse timestamp: timestamp is out of range.", 0);
+      ParseException ex =
+          new ParseException(
+              "Failed to parse timestamp " + value + " Timestamp is out of range.", 0);
+      ex.initCause(e);
+      throw ex;
     }
+  }
+
+  /**
+   * Parses a string in RFC 3339 format into a {@link Timestamp}.
+   *
+   * <p>Identical to {@link #parse(String)}, but throws an {@link IllegalArgumentException} instead
+   * of a {@link ParseException} if parsing fails.
+   *
+   * @return a {@link Timestamp} parsed from the string
+   * @throws IllegalArgumentException if parsing fails
+   */
+  public static Timestamp parseUnchecked(@CompileTimeConstant String value) {
+    try {
+      return parse(value);
+    } catch (ParseException e) {
+      // While `java.time.format.DateTimeParseException` is a more accurate representation of the
+      // failure, this library is currently not JDK8 ready because of Android dependencies.
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  // the following 3 constants contain references to java.time.Instant methods (if that class is
+  // available at runtime); otherwise, they are null.
+  @Nullable private static final Method INSTANT_NOW = instantMethod("now");
+
+  @Nullable private static final Method INSTANT_GET_EPOCH_SECOND = instantMethod("getEpochSecond");
+
+  @Nullable private static final Method INSTANT_GET_NANO = instantMethod("getNano");
+
+  @Nullable
+  private static Method instantMethod(String methodName) {
+    try {
+      return Class.forName("java.time.Instant").getMethod(methodName);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
+   * Create a {@link Timestamp} using the best-available (in terms of precision) system clock.
+   *
+   * <p><b>Note:</b> that while this API is convenient, it may harm the testability of your code, as
+   * you're unable to mock the current time. Instead, you may want to consider injecting a clock
+   * instance to read the current time.
+   */
+  public static Timestamp now() {
+    if (INSTANT_NOW != null) {
+      try {
+        Object now = INSTANT_NOW.invoke(null);
+        long epochSecond = (long) INSTANT_GET_EPOCH_SECOND.invoke(now);
+        int nanoAdjustment = (int) INSTANT_GET_NANO.invoke(now);
+        return normalizedTimestamp(epochSecond, nanoAdjustment);
+      } catch (Throwable fallThrough) {
+        throw new AssertionError(fallThrough);
+      }
+    }
+    // otherwise, fall back on millisecond precision
+    return fromMillis(System.currentTimeMillis());
   }
 
   /** Create a Timestamp from the number of seconds elapsed from the epoch. */
@@ -307,9 +352,34 @@ public final class Timestamps {
   }
 
   /**
+   * Create a Timestamp from a {@link Date}. If the {@link Date} is a {@link java.sql.Timestamp},
+   * full nanonsecond precision is retained.
+   *
+   * @throws IllegalArgumentException if the year is before 1 CE or after 9999 CE
+   */
+  @SuppressWarnings("GoodTime") // this is a legacy conversion API
+  @J2ObjCIncompatible
+  public static Timestamp fromDate(Date date) {
+    if (date instanceof java.sql.Timestamp) {
+      java.sql.Timestamp sqlTimestamp = (java.sql.Timestamp) date;
+      long time = sqlTimestamp.getTime();
+      long integralSeconds =
+          (time < 0 && time % 1000 != 0)
+              ? time / 1000L - 1
+              : time / 1000L; // truncate the fractional seconds
+      return Timestamp.newBuilder()
+          .setSeconds(integralSeconds)
+          .setNanos(sqlTimestamp.getNanos())
+          .build();
+    } else {
+      return fromMillis(date.getTime());
+    }
+  }
+
+  /**
    * Convert a Timestamp to the number of milliseconds elapsed from the epoch.
    *
-   * <p>The result will be rounded down to the nearest millisecond. E.g., if the timestamp
+   * <p>The result will be rounded down to the nearest millisecond. For instance, if the timestamp
    * represents "1969-12-31T23:59:59.999999999Z", it will be rounded to -1 millisecond.
    */
   @SuppressWarnings("GoodTime") // this is a legacy conversion API
@@ -357,7 +427,17 @@ public final class Timestamps {
         checkedMultiply(timestamp.getSeconds(), NANOS_PER_SECOND), timestamp.getNanos());
   }
 
-  /** Calculate the difference between two timestamps. */
+  /**
+   * Calculate the difference between two timestamps.
+   *
+   * <!-- MOE:begin_intracomment_strip -->
+   * @deprecated Do not use this method for new code. Instead, convert to {@link java.time.Instant}
+   *     using {@link com.google.protobuf.util.JavaTimeConversions#toJavaInstant}, do the arithmetic
+   *     there, and convert back using {@link
+   *     com.google.protobuf.util.JavaTimeConversions#toProtoDuration}.
+   * <!-- MOE:end_intracomment_strip -->
+   */
+  @Deprecated // MOE:strip_line
   public static Duration between(Timestamp from, Timestamp to) {
     checkValid(from);
     checkValid(to);
@@ -366,7 +446,18 @@ public final class Timestamps {
         checkedSubtract(to.getNanos(), from.getNanos()));
   }
 
-  /** Add a duration to a timestamp. */
+  /**
+   * Add a duration to a timestamp.
+   *
+   * <!-- MOE:begin_intracomment_strip -->
+   * @deprecated Do not use this method for new code. Instead, convert to {@link java.time.Instant}
+   *     and {@link java.time.Duration} using {@link
+   *     com.google.protobuf.util.JavaTimeConversions#toJavaInstant} and {@link
+   *     com.google.protobuf.util.JavaTimeConversions#toJavaDuration}, do the arithmetic there, and
+   *     convert back using {@link com.google.protobuf.util.JavaTimeConversions#toProtoTimestamp}.
+   * <!-- MOE:end_intracomment_strip -->
+   */
+  @Deprecated // MOE:strip_line
   public static Timestamp add(Timestamp start, Duration length) {
     checkValid(start);
     Durations.checkValid(length);
@@ -375,7 +466,18 @@ public final class Timestamps {
         checkedAdd(start.getNanos(), length.getNanos()));
   }
 
-  /** Subtract a duration from a timestamp. */
+  /**
+   * Subtract a duration from a timestamp.
+   *
+   * <!-- MOE:begin_intracomment_strip -->
+   * @deprecated Do not use this method for new code. Instead, convert to {@link java.time.Instant}
+   *     and {@link java.time.Duration} using {@link
+   *     com.google.protobuf.util.JavaTimeConversions#toJavaInstant} and {@link
+   *     com.google.protobuf.util.JavaTimeConversions#toJavaDuration}, do the arithmetic there, and
+   *     convert back using {@link com.google.protobuf.util.JavaTimeConversions#toProtoTimestamp}.
+   * <!-- MOE:end_intracomment_strip -->
+   */
+  @Deprecated // MOE:strip_line
   public static Timestamp subtract(Timestamp start, Duration length) {
     checkValid(start);
     Durations.checkValid(length);
@@ -406,7 +508,13 @@ public final class Timestamps {
     }
     String hours = value.substring(0, pos);
     String minutes = value.substring(pos + 1);
-    return (Long.parseLong(hours) * 60 + Long.parseLong(minutes)) * 60;
+    try {
+      return (Long.parseLong(hours) * 60 + Long.parseLong(minutes)) * 60;
+    } catch (NumberFormatException e) {
+      ParseException ex = new ParseException("Invalid offset value: " + value, 0);
+      ex.initCause(e);
+      throw ex;
+    }
   }
 
   static int parseNanos(String value) throws ParseException {

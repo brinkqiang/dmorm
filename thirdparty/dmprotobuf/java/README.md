@@ -23,7 +23,7 @@ If you are using Maven, use the following:
 <dependency>
   <groupId>com.google.protobuf</groupId>
   <artifactId>protobuf-java</artifactId>
-  <version>3.11.0</version>
+  <version>4.26.0</version>
 </dependency>
 ```
 
@@ -37,17 +37,16 @@ protobuf-java-util package:
 <dependency>
   <groupId>com.google.protobuf</groupId>
   <artifactId>protobuf-java-util</artifactId>
-  <version>3.11.0</version>
+  <version>4.26.0</version>
 </dependency>
 ```
 
 ### Gradle
 
-If you are using Gradle, add the following to your `build.gradle` file's dependencies:
-```
-    implementation 'com.google.protobuf:protobuf-java:3.11.0'
-```
-Again, be sure to check that the version number matches (or is newer than) the version number of protoc that you are using.
+If you are using Gradle, add the following to your `build.gradle` file's
+dependencies: `implementation 'com.google.protobuf:protobuf-java:4.26.0'` Again,
+be sure to check that the version number matches (or is newer than) the version
+number of protoc that you are using.
 
 ### Use Java Protocol Buffers on Android
 
@@ -178,3 +177,8 @@ The complete documentation for Protocol Buffers is available via the
 web at:
 
   https://developers.google.com/protocol-buffers/
+
+## Kotlin Protocol Buffers
+
+Code to support more idiomatic Kotlin protocol buffers has been added to the
+repository, and Kotlin support will be launched in the next numbered release.

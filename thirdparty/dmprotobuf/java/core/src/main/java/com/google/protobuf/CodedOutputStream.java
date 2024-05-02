@@ -1,32 +1,9 @@
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
-// https://developers.google.com/protocol-buffers/
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
 
 package com.google.protobuf;
 
@@ -63,7 +40,9 @@ public abstract class CodedOutputStream extends ByteOutput {
   /** Used to adapt to the experimental {@link Writer} interface. */
   CodedOutputStreamWriter wrapper;
 
-  /** @deprecated Use {@link #computeFixed32SizeNoTag(int)} instead. */
+  /**
+   * @deprecated Use {@link #computeFixed32SizeNoTag(int)} instead.
+   */
   @Deprecated public static final int LITTLE_ENDIAN_32_SIZE = FIXED32_SIZE;
 
   /** The buffer size used in {@link #newInstance(OutputStream)}. */
@@ -456,7 +435,7 @@ public abstract class CodedOutputStream extends ByteOutput {
   }
 
   /** Write a {@code string} field to the stream. */
-  // TODO(dweis): Document behavior on ill-formed UTF-16 input.
+  // TODO: Document behavior on ill-formed UTF-16 input.
   // Abstract to avoid overhead of additional virtual method calls.
   public abstract void writeStringNoTag(String value) throws IOException;
 
@@ -692,9 +671,8 @@ public abstract class CodedOutputStream extends ByteOutput {
   }
 
   /**
-   * Compute the number of bytes that would be needed to encode an lazily parsed MessageSet
-   * extension field to the stream. For historical reasons, the wire format differs from normal
-   * fields.
+   * Compute the number of bytes that would be needed to encode a lazily parsed MessageSet extension
+   * field to the stream. For historical reasons, the wire format differs from normal fields.
    */
   public static int computeLazyFieldMessageSetExtensionSize(
       final int fieldNumber, final LazyFieldLite value) {
@@ -715,29 +693,52 @@ public abstract class CodedOutputStream extends ByteOutput {
    * tag.
    */
   public static int computeInt32SizeNoTag(final int value) {
-    if (value >= 0) {
-      return computeUInt32SizeNoTag(value);
-    } else {
-      // Must sign-extend.
-      return MAX_VARINT_SIZE;
-    }
+    return computeUInt64SizeNoTag((long) value);
   }
 
   /** Compute the number of bytes that would be needed to encode a {@code uint32} field. */
   public static int computeUInt32SizeNoTag(final int value) {
-    if ((value & (~0 << 7)) == 0) {
-      return 1;
-    }
-    if ((value & (~0 << 14)) == 0) {
-      return 2;
-    }
-    if ((value & (~0 << 21)) == 0) {
-      return 3;
-    }
-    if ((value & (~0 << 28)) == 0) {
-      return 4;
-    }
-    return 5;
+    /*
+    This code is ported from the C++ varint implementation.
+    Implementation notes:
+
+    To calcuate varint size, we want to count the number of 7 bit chunks required. Rather than using
+    division by 7 to accomplish this, we use multiplication by 9/64. This has a number of important
+    properties:
+     * It's roughly 1/7.111111. This makes the 0 bits set case have the same value as the 7 bits set
+       case, so offsetting by 1 gives us the correct value we want for integers up to 448 bits.
+     * Multiplying by 9 is special. x * 9 = x << 3 + x, and so this multiplication can be done by a
+       single shifted add on arm (add w0, w0, w0, lsl #3), or a single lea instruction
+       (leal (%rax,%rax,8), %eax)) on x86.
+     * Dividing by 64 is a 6 bit right shift.
+
+    An explicit non-sign-extended right shift is used instead of the more obvious '/ 64' because
+    that actually produces worse code on android arm64 at time of authoring because of sign
+    extension. Rather than
+        lsr w0, w0, #6
+    It would emit:
+        add w16, w0, #0x3f (63)
+        cmp w0, #0x0 (0)
+        csel w0, w16, w0, lt
+        asr w0, w0, #6
+
+    Summarized:
+    floor(((Integer.SIZE - clz) / 7.1111) + 1
+    ((Integer.SIZE - clz) * 9) / 64 + 1
+    (((Integer.SIZE - clz) * 9) >>> 6) + 1
+    ((Integer.SIZE - clz) * 9 + (1 << 6)) >>> 6
+    (Integer.SIZE * 9 + (1 << 6) - clz * 9) >>> 6
+    (352 - clz * 9) >>> 6
+    on arm:
+    (352 - clz - (clz << 3)) >>> 6
+    on x86:
+    (352 - lea(clz, clz, 8)) >>> 6
+
+    If you make changes here, please validate their compiled output on different architectures and
+    runtimes.
+    */
+    int clz = Integer.numberOfLeadingZeros(value);
+    return ((Integer.SIZE * 9 + (1 << 6)) - (clz * 9)) >>> 6;
   }
 
   /** Compute the number of bytes that would be needed to encode an {@code sint32} field. */
@@ -768,27 +769,9 @@ public abstract class CodedOutputStream extends ByteOutput {
    * tag.
    */
   public static int computeUInt64SizeNoTag(long value) {
-    // handle two popular special cases up front ...
-    if ((value & (~0L << 7)) == 0L) {
-      return 1;
-    }
-    if (value < 0L) {
-      return 10;
-    }
-    // ... leaving us with 8 remaining, which we can divide and conquer
-    int n = 2;
-    if ((value & (~0L << 35)) != 0L) {
-      n += 4;
-      value >>>= 28;
-    }
-    if ((value & (~0L << 21)) != 0L) {
-      n += 2;
-      value >>>= 14;
-    }
-    if ((value & (~0L << 14)) != 0L) {
-      n += 1;
-    }
-    return n;
+    int clz = Long.numberOfLeadingZeros(value);
+    // See computeUInt32SizeNoTag for explanation
+    return ((Long.SIZE * 9 + (1 << 6)) - (clz * 9)) >>> 6;
   }
 
   /** Compute the number of bytes that would be needed to encode an {@code sint64} field. */
@@ -841,7 +824,7 @@ public abstract class CodedOutputStream extends ByteOutput {
     try {
       length = Utf8.encodedLength(value);
     } catch (UnpairedSurrogateException e) {
-      // TODO(dweis): Consider using nio Charset methods instead.
+      // TODO: Consider using nio Charset methods instead.
       final byte[] bytes = value.getBytes(Internal.UTF_8);
       length = bytes.length;
     }
@@ -989,15 +972,13 @@ public abstract class CodedOutputStream extends ByteOutput {
     // Unfortunately there does not appear to be any way to tell Java to encode
     // UTF-8 directly into our buffer, so we have to let it create its own byte
     // array and then copy.
-    // TODO(dweis): Consider using nio Charset methods instead.
+    // TODO: Consider using nio Charset methods instead.
     final byte[] bytes = value.getBytes(Internal.UTF_8);
     try {
       writeUInt32NoTag(bytes.length);
       writeLazy(bytes, 0, bytes.length);
     } catch (IndexOutOfBoundsException e) {
       throw new OutOfSpaceException(e);
-    } catch (OutOfSpaceException e) {
-      throw e;
     }
   }
 
@@ -1056,7 +1037,7 @@ public abstract class CodedOutputStream extends ByteOutput {
    */
   @Deprecated
   public static int computeGroupSize(final int fieldNumber, final MessageLite value) {
-    return computeTagSize(fieldNumber) * 2 + computeGroupSizeNoTag(value);
+    return computeTagSize(fieldNumber) * 2 + value.getSerializedSize();
   }
 
   /**
@@ -1072,6 +1053,7 @@ public abstract class CodedOutputStream extends ByteOutput {
 
   /** Compute the number of bytes that would be needed to encode a {@code group} field. */
   @Deprecated
+  @InlineMe(replacement = "value.getSerializedSize()")
   public static int computeGroupSizeNoTag(final MessageLite value) {
     return value.getSerializedSize();
   }
@@ -1089,6 +1071,7 @@ public abstract class CodedOutputStream extends ByteOutput {
    * @deprecated use {@link #writeUInt32NoTag} instead.
    */
   @Deprecated
+  @InlineMe(replacement = "this.writeUInt32NoTag(value)")
   public final void writeRawVarint32(int value) throws IOException {
     writeUInt32NoTag(value);
   }
@@ -1099,6 +1082,7 @@ public abstract class CodedOutputStream extends ByteOutput {
    * @deprecated use {@link #writeUInt64NoTag} instead.
    */
   @Deprecated
+  @InlineMe(replacement = "this.writeUInt64NoTag(value)")
   public final void writeRawVarint64(long value) throws IOException {
     writeUInt64NoTag(value);
   }
@@ -1110,6 +1094,9 @@ public abstract class CodedOutputStream extends ByteOutput {
    * @deprecated use {@link #computeUInt32SizeNoTag(int)} instead.
    */
   @Deprecated
+  @InlineMe(
+      replacement = "CodedOutputStream.computeUInt32SizeNoTag(value)",
+      imports = "com.google.protobuf.CodedOutputStream")
   public static int computeRawVarint32Size(final int value) {
     return computeUInt32SizeNoTag(value);
   }
@@ -1120,6 +1107,9 @@ public abstract class CodedOutputStream extends ByteOutput {
    * @deprecated use {@link #computeUInt64SizeNoTag(long)} instead.
    */
   @Deprecated
+  @InlineMe(
+      replacement = "CodedOutputStream.computeUInt64SizeNoTag(value)",
+      imports = "com.google.protobuf.CodedOutputStream")
   public static int computeRawVarint64Size(long value) {
     return computeUInt64SizeNoTag(value);
   }
@@ -1130,6 +1120,7 @@ public abstract class CodedOutputStream extends ByteOutput {
    * @deprecated Use {@link #writeFixed32NoTag} instead.
    */
   @Deprecated
+  @InlineMe(replacement = "this.writeFixed32NoTag(value)")
   public final void writeRawLittleEndian32(final int value) throws IOException {
     writeFixed32NoTag(value);
   }
@@ -1140,6 +1131,7 @@ public abstract class CodedOutputStream extends ByteOutput {
    * @deprecated Use {@link #writeFixed64NoTag} instead.
    */
   @Deprecated
+  @InlineMe(replacement = "this.writeFixed64NoTag(value)")
   public final void writeRawLittleEndian64(final long value) throws IOException {
     writeFixed64NoTag(value);
   }
@@ -1262,7 +1254,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         write(value.array(), value.arrayOffset(), value.capacity());
       } else {
         ByteBuffer duplicated = value.duplicate();
-        duplicated.clear();
+        Java8Compatibility.clear(duplicated);
         write(duplicated);
       }
     }
@@ -1334,49 +1326,19 @@ public abstract class CodedOutputStream extends ByteOutput {
 
     @Override
     public final void writeUInt32NoTag(int value) throws IOException {
-      if (HAS_UNSAFE_ARRAY_OPERATIONS
-          && !Android.isOnAndroidDevice()
-          && spaceLeft() >= MAX_VARINT32_SIZE) {
-        if ((value & ~0x7F) == 0) {
-          UnsafeUtil.putByte(buffer, position++, (byte) value);
-          return;
-        }
-        UnsafeUtil.putByte(buffer, position++, (byte) (value | 0x80));
-        value >>>= 7;
-        if ((value & ~0x7F) == 0) {
-          UnsafeUtil.putByte(buffer, position++, (byte) value);
-          return;
-        }
-        UnsafeUtil.putByte(buffer, position++, (byte) (value | 0x80));
-        value >>>= 7;
-        if ((value & ~0x7F) == 0) {
-          UnsafeUtil.putByte(buffer, position++, (byte) value);
-          return;
-        }
-        UnsafeUtil.putByte(buffer, position++, (byte) (value | 0x80));
-        value >>>= 7;
-        if ((value & ~0x7F) == 0) {
-          UnsafeUtil.putByte(buffer, position++, (byte) value);
-          return;
-        }
-        UnsafeUtil.putByte(buffer, position++, (byte) (value | 0x80));
-        value >>>= 7;
-        UnsafeUtil.putByte(buffer, position++, (byte) value);
-      } else {
-        try {
-          while (true) {
-            if ((value & ~0x7F) == 0) {
-              buffer[position++] = (byte) value;
-              return;
-            } else {
-              buffer[position++] = (byte) ((value & 0x7F) | 0x80);
-              value >>>= 7;
-            }
+      try {
+        while (true) {
+          if ((value & ~0x7F) == 0) {
+            buffer[position++] = (byte) value;
+            return;
+          } else {
+            buffer[position++] = (byte) ((value | 0x80) & 0xFF);
+            value >>>= 7;
           }
-        } catch (IndexOutOfBoundsException e) {
-          throw new OutOfSpaceException(
-              String.format("Pos: %d, limit: %d, len: %d", position, limit, 1), e);
         }
+      } catch (IndexOutOfBoundsException e) {
+        throw new OutOfSpaceException(
+            String.format("Pos: %d, limit: %d, len: %d", position, limit, 1), e);
       }
     }
 
@@ -1401,7 +1363,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(buffer, position++, (byte) value);
             return;
           } else {
-            UnsafeUtil.putByte(buffer, position++, (byte) (((int) value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(buffer, position++, (byte) (((int) value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -1412,7 +1374,7 @@ public abstract class CodedOutputStream extends ByteOutput {
               buffer[position++] = (byte) value;
               return;
             } else {
-              buffer[position++] = (byte) (((int) value & 0x7F) | 0x80);
+              buffer[position++] = (byte) (((int) value | 0x80) & 0xFF);
               value >>>= 7;
             }
           }
@@ -1500,7 +1462,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         // Roll back the change - we fall back to inefficient path.
         position = oldPosition;
 
-        // TODO(nathanmittler): We should throw an IOException here instead.
+        // TODO: We should throw an IOException here instead.
         inefficientWriteStringNoTag(value, e);
       } catch (IndexOutOfBoundsException e) {
         throw new OutOfSpaceException(e);
@@ -1543,7 +1505,7 @@ public abstract class CodedOutputStream extends ByteOutput {
     @Override
     public void flush() {
       // Update the position on the buffer.
-      byteBuffer.position(initialPosition + getTotalBytesWritten());
+      Java8Compatibility.position(byteBuffer, initialPosition + getTotalBytesWritten());
     }
   }
 
@@ -1705,7 +1667,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         write(value.array(), value.arrayOffset(), value.capacity());
       } else {
         ByteBuffer duplicated = value.duplicate();
-        duplicated.clear();
+        Java8Compatibility.clear(duplicated);
         write(duplicated);
       }
     }
@@ -1728,7 +1690,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             buffer.put((byte) value);
             return;
           } else {
-            buffer.put((byte) ((value & 0x7F) | 0x80));
+            buffer.put((byte) ((value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -1754,7 +1716,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             buffer.put((byte) value);
             return;
           } else {
-            buffer.put((byte) (((int) value & 0x7F) | 0x80));
+            buffer.put((byte) (((int) value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -1815,18 +1777,18 @@ public abstract class CodedOutputStream extends ByteOutput {
           // Save the current position and increment past the length field. We'll come back
           // and write the length field after the encoding is complete.
           final int startOfBytes = buffer.position() + minLengthVarIntSize;
-          buffer.position(startOfBytes);
+          Java8Compatibility.position(buffer, startOfBytes);
 
           // Encode the string.
           encode(value);
 
           // Now go back to the beginning and write the length.
           int endOfBytes = buffer.position();
-          buffer.position(startPos);
+          Java8Compatibility.position(buffer, startPos);
           writeUInt32NoTag(endOfBytes - startOfBytes);
 
           // Reposition the buffer past the written data.
-          buffer.position(endOfBytes);
+          Java8Compatibility.position(buffer, endOfBytes);
         } else {
           final int length = Utf8.encodedLength(value);
           writeUInt32NoTag(length);
@@ -1834,9 +1796,9 @@ public abstract class CodedOutputStream extends ByteOutput {
         }
       } catch (UnpairedSurrogateException e) {
         // Roll back the change and convert to an IOException.
-        buffer.position(startPos);
+        Java8Compatibility.position(buffer, startPos);
 
-        // TODO(nathanmittler): We should throw an IOException here instead.
+        // TODO: We should throw an IOException here instead.
         inefficientWriteStringNoTag(value, e);
       } catch (IllegalArgumentException e) {
         // Thrown by buffer.position() if out of range.
@@ -1847,7 +1809,7 @@ public abstract class CodedOutputStream extends ByteOutput {
     @Override
     public void flush() {
       // Update the position of the original buffer.
-      originalBuffer.position(buffer.position());
+      Java8Compatibility.position(originalBuffer, buffer.position());
     }
 
     @Override
@@ -2035,7 +1997,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         write(value.array(), value.arrayOffset(), value.capacity());
       } else {
         ByteBuffer duplicated = value.duplicate();
-        duplicated.clear();
+        Java8Compatibility.clear(duplicated);
         write(duplicated);
       }
     }
@@ -2059,7 +2021,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(position++, (byte) value);
             return;
           } else {
-            UnsafeUtil.putByte(position++, (byte) ((value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(position++, (byte) ((value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -2069,7 +2031,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(position++, (byte) value);
             return;
           } else {
-            UnsafeUtil.putByte(position++, (byte) ((value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(position++, (byte) ((value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -2093,7 +2055,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(position++, (byte) value);
             return;
           } else {
-            UnsafeUtil.putByte(position++, (byte) (((int) value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(position++, (byte) (((int) value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -2103,7 +2065,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(position++, (byte) value);
             return;
           } else {
-            UnsafeUtil.putByte(position++, (byte) (((int) value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(position++, (byte) (((int) value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -2171,7 +2133,7 @@ public abstract class CodedOutputStream extends ByteOutput {
           // Save the current position and increment past the length field. We'll come back
           // and write the length field after the encoding is complete.
           int stringStart = bufferPos(position) + minLengthVarIntSize;
-          buffer.position(stringStart);
+          Java8Compatibility.position(buffer, stringStart);
 
           // Encode the string.
           Utf8.encodeUtf8(value, buffer);
@@ -2195,7 +2157,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         position = prevPos;
         repositionBuffer(position);
 
-        // TODO(nathanmittler): We should throw an IOException here instead.
+        // TODO: We should throw an IOException here instead.
         inefficientWriteStringNoTag(value, e);
       } catch (IllegalArgumentException e) {
         // Thrown by buffer.position() if out of range.
@@ -2208,7 +2170,7 @@ public abstract class CodedOutputStream extends ByteOutput {
     @Override
     public void flush() {
       // Update the position of the original buffer.
-      originalBuffer.position(bufferPos(position));
+      Java8Compatibility.position(originalBuffer, bufferPos(position));
     }
 
     @Override
@@ -2222,7 +2184,7 @@ public abstract class CodedOutputStream extends ByteOutput {
     }
 
     private void repositionBuffer(long pos) {
-      buffer.position(bufferPos(pos));
+      Java8Compatibility.position(buffer, bufferPos(pos));
     }
 
     private int bufferPos(long pos) {
@@ -2303,7 +2265,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(buffer, position++, (byte) value);
             break;
           } else {
-            UnsafeUtil.putByte(buffer, position++, (byte) ((value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(buffer, position++, (byte) ((value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -2316,7 +2278,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             totalBytesWritten++;
             return;
           } else {
-            buffer[position++] = (byte) ((value & 0x7F) | 0x80);
+            buffer[position++] = (byte) ((value | 0x80) & 0xFF);
             totalBytesWritten++;
             value >>>= 7;
           }
@@ -2336,7 +2298,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             UnsafeUtil.putByte(buffer, position++, (byte) value);
             break;
           } else {
-            UnsafeUtil.putByte(buffer, position++, (byte) (((int) value & 0x7F) | 0x80));
+            UnsafeUtil.putByte(buffer, position++, (byte) (((int) value | 0x80) & 0xFF));
             value >>>= 7;
           }
         }
@@ -2349,7 +2311,7 @@ public abstract class CodedOutputStream extends ByteOutput {
             totalBytesWritten++;
             return;
           } else {
-            buffer[position++] = (byte) (((int) value & 0x7F) | 0x80);
+            buffer[position++] = (byte) (((int) value | 0x80) & 0xFF);
             totalBytesWritten++;
             value >>>= 7;
           }
@@ -2499,7 +2461,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         write(value.array(), value.arrayOffset(), value.capacity());
       } else {
         ByteBuffer duplicated = value.duplicate();
-        duplicated.clear();
+        Java8Compatibility.clear(duplicated);
         write(duplicated);
       }
     }
@@ -2644,7 +2606,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         totalBytesWritten -= position - oldPosition;
         position = oldPosition;
 
-        // TODO(nathanmittler): We should throw an IOException here instead.
+        // TODO: We should throw an IOException here instead.
         inefficientWriteStringNoTag(value, e);
       } catch (IndexOutOfBoundsException e) {
         throw new OutOfSpaceException(e);
@@ -2813,7 +2775,7 @@ public abstract class CodedOutputStream extends ByteOutput {
         write(value.array(), value.arrayOffset(), value.capacity());
       } else {
         ByteBuffer duplicated = value.duplicate();
-        duplicated.clear();
+        Java8Compatibility.clear(duplicated);
         write(duplicated);
       }
     }

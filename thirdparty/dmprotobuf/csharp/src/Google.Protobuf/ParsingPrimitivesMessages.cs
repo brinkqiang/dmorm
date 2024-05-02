@@ -1,40 +1,17 @@
 ﻿#region Copyright notice and license
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
-// https://developers.google.com/protocol-buffers/
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
 #endregion
 
 using System;
 using System.Buffers;
-using System.IO;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.Security;
+using Google.Protobuf.Collections;
 
 namespace Google.Protobuf
 {
@@ -44,6 +21,8 @@ namespace Google.Protobuf
     [SecuritySafeCritical]
     internal static class ParsingPrimitivesMessages
     {
+        private static readonly byte[] ZeroLengthMessageStreamData = new byte[] { 0 };
+
         public static void SkipLastField(ref ReadOnlySpan<byte> buffer, ref ParserInternalState state)
         {
             if (state.lastTag == 0)
@@ -132,6 +111,65 @@ namespace Google.Protobuf
             }
             --ctx.state.recursionDepth;
             SegmentedBufferHelper.PopLimit(ref ctx.state, oldLimit);
+        }
+
+        public static KeyValuePair<TKey, TValue> ReadMapEntry<TKey, TValue>(ref ParseContext ctx, MapField<TKey, TValue>.Codec codec)
+        {
+            int length = ParsingPrimitives.ParseLength(ref ctx.buffer, ref ctx.state);
+            if (ctx.state.recursionDepth >= ctx.state.recursionLimit)
+            {
+                throw InvalidProtocolBufferException.RecursionLimitExceeded();
+            }
+            int oldLimit = SegmentedBufferHelper.PushLimit(ref ctx.state, length);
+            ++ctx.state.recursionDepth;
+
+            TKey key = codec.KeyCodec.DefaultValue;
+            TValue value = codec.ValueCodec.DefaultValue;
+
+            uint tag;
+            while ((tag = ctx.ReadTag()) != 0)
+            {
+                if (tag == codec.KeyCodec.Tag)
+                {
+                    key = codec.KeyCodec.Read(ref ctx);
+                }
+                else if (tag == codec.ValueCodec.Tag)
+                {
+                    value = codec.ValueCodec.Read(ref ctx);
+                }
+                else
+                {
+                    SkipLastField(ref ctx.buffer, ref ctx.state);
+                }
+            }
+
+            // Corner case: a map entry with a key but no value, where the value type is a message.
+            // Read it as if we'd seen input with no data (i.e. create a "default" message).
+            if (value == null)
+            {
+                if (ctx.state.CodedInputStream != null)
+                {
+                    // the decoded message might not support parsing from ParseContext, so
+                    // we need to allow fallback to the legacy MergeFrom(CodedInputStream) parsing.
+                    value = codec.ValueCodec.Read(new CodedInputStream(ZeroLengthMessageStreamData));
+                }
+                else
+                {
+                    ParseContext.Initialize(new ReadOnlySequence<byte>(ZeroLengthMessageStreamData), out ParseContext zeroLengthCtx);
+                    value = codec.ValueCodec.Read(ref zeroLengthCtx);
+                }
+            }
+
+            CheckReadEndOfStreamTag(ref ctx.state);
+            // Check that we've read exactly as much data as expected.
+            if (!SegmentedBufferHelper.IsReachedLimit(ref ctx.state))
+            {
+                throw InvalidProtocolBufferException.TruncatedMessage();
+            }
+            --ctx.state.recursionDepth;
+            SegmentedBufferHelper.PopLimit(ref ctx.state, oldLimit);
+
+            return new KeyValuePair<TKey, TValue>(key, value);
         }
 
         public static void ReadGroup(ref ParseContext ctx, IMessage message)

@@ -1,4 +1,13 @@
-﻿using Google.Protobuf.TestProtos.Proto2;
+#region Copyright notice and license
+// Protocol Buffers - Google's data interchange format
+// Copyright 2015 Google Inc.  All rights reserved.
+//
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
+#endregion
+
+using Google.Protobuf.TestProtos.Proto2;
 using Proto2 = Google.Protobuf.TestProtos.Proto2;
 using NUnit.Framework;
 
@@ -379,6 +388,17 @@ namespace Google.Protobuf
             MessageParsingHelpers.AssertRoundtrip(
                 TestGroupExtension.Parser.WithExtensionRegistry(new ExtensionRegistry() { TestNestedExtension.Extensions.OptionalGroupExtension }),
                 message);
+        }
+
+        [Test]
+        public void RoundTrip_ParseUsingCodedInput()
+        {
+            var message = new TestAllExtensions();
+            message.SetExtension(UnittestExtensions.OptionalBoolExtension, true);
+            byte[] bytes = message.ToByteArray();
+            using CodedInputStream input = new CodedInputStream(bytes);
+            var parsed = TestAllExtensions.Parser.WithExtensionRegistry(new ExtensionRegistry() { UnittestExtensions.OptionalBoolExtension }).ParseFrom(input);
+            Assert.AreEqual(message, parsed);
         }
     }
 }

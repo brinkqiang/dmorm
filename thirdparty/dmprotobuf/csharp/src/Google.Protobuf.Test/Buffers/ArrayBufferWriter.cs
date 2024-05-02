@@ -1,33 +1,10 @@
 ﻿#region Copyright notice and license
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
-// https://developers.google.com/protocol-buffers/
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file or at
+// https://developers.google.com/open-source/licenses/bsd
 #endregion
 
 using System;
@@ -42,7 +19,7 @@ namespace Google.Protobuf.Buffers
     /// ArrayBufferWriter is originally from corefx, and has been contributed to Protobuf
     /// https://github.com/dotnet/runtime/blob/071da4c41aa808c949a773b92dca6f88de9d11f3/src/libraries/Common/src/System/Buffers/ArrayBufferWriter.cs
     /// </summary>
-    internal sealed class ArrayBufferWriter<T> : IBufferWriter<T>
+    internal sealed class TestArrayBufferWriter<T> : IBufferWriter<T>
     {
         private T[] _buffer;
         private int _index;
@@ -50,10 +27,10 @@ namespace Google.Protobuf.Buffers
         private const int DefaultInitialBufferSize = 256;
 
         /// <summary>
-        /// Creates an instance of an <see cref="ArrayBufferWriter{T}"/>, in which data can be written to,
+        /// Creates an instance of an <see cref="TestArrayBufferWriter{T}"/>, in which data can be written to,
         /// with the default initial capacity.
         /// </summary>
-        public ArrayBufferWriter()
+        public TestArrayBufferWriter()
         {
             _buffer = new T[0];
             _index = 0;
@@ -66,14 +43,14 @@ namespace Google.Protobuf.Buffers
         public int? MaxGrowBy { get; set; }
 
         /// <summary>
-        /// Creates an instance of an <see cref="ArrayBufferWriter{T}"/>, in which data can be written to,
+        /// Creates an instance of an <see cref="TestArrayBufferWriter{T}"/>, in which data can be written to,
         /// with an initial capacity specified.
         /// </summary>
         /// <param name="initialCapacity">The minimum capacity with which to initialize the underlying buffer.</param>
         /// <exception cref="ArgumentException">
         /// Thrown when <paramref name="initialCapacity"/> is not positive (i.e. less than or equal to 0).
         /// </exception>
-        public ArrayBufferWriter(int initialCapacity)
+        public TestArrayBufferWriter(int initialCapacity)
         {
             if (initialCapacity <= 0)
                 throw new ArgumentException(nameof(initialCapacity));
@@ -111,7 +88,7 @@ namespace Google.Protobuf.Buffers
         /// Clears the data written to the underlying buffer.
         /// </summary>
         /// <remarks>
-        /// You must clear the <see cref="ArrayBufferWriter{T}"/> before trying to re-use it.
+        /// You must clear the <see cref="TestArrayBufferWriter{T}"/> before trying to re-use it.
         /// </remarks>
         public void Clear()
         {

@@ -5,6 +5,7 @@ require_once('test_util.php');
 
 use Google\Protobuf\RepeatedField;
 use Google\Protobuf\GPBType;
+use Foo\EmptyAnySerialization;
 use Foo\TestInt32Value;
 use Foo\TestInt64Value;
 use Foo\TestUInt32Value;
@@ -14,6 +15,7 @@ use Foo\TestStringValue;
 use Foo\TestBytesValue;
 use Foo\TestAny;
 use Foo\TestEnum;
+use Foo\TestLargeFieldNumber;
 use Foo\TestMessage;
 use Foo\TestMessage\Sub;
 use Foo\TestPackedMessage;
@@ -42,6 +44,21 @@ class EncodeDecodeTest extends TestBase
         $m = new TestMessage();
         $m->mergeFromJsonString("{\"optionalInt32\":1}");
         $this->assertEquals(1, $m->getOptionalInt32());
+    }
+
+    public function testDecodeJsonUnknown()
+    {
+        $this->expectException(Exception::class);
+
+        $m = new TestMessage();
+        $m->mergeFromJsonString("{\"unknown\":1}");
+    }
+
+    public function testDecodeJsonIgnoreUnknown()
+    {
+        $m = new TestMessage();
+        $m->mergeFromJsonString("{\"unknown\":1}", true);
+        $this->assertEquals("{}", $m->serializeToJsonString());
     }
 
     public function testDecodeTopLevelBoolValue()
@@ -212,7 +229,7 @@ class EncodeDecodeTest extends TestBase
     public function generateRandomString($length = 10) {
         $randomString = str_repeat("+", $length);
         for ($i = 0; $i < $length; $i++) {
-            $randomString[$i] = rand(0, 255);
+            $randomString[$i] = chr(rand(0, 255));
         }
         return $randomString;
     }
@@ -529,200 +546,197 @@ class EncodeDecodeTest extends TestBase
         $this->assertSame("", $data);
     }
 
-    /**
-     * @expectedException Exception
-     */
+    public function testLargeFieldNumber()
+    {
+        $m = new TestLargeFieldNumber(['large_field_number' => 5]);
+        $data = $m->serializeToString();
+        $m2 = new TestLargeFieldNumber();
+        $m2->mergeFromString($data);
+        $this->assertSame(5, $m2->getLargeFieldNumber());
+    }
+
     public function testDecodeInvalidInt32()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('08'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidSubMessage()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('9A010108'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidInt64()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('10'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidUInt32()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('18'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidUInt64()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('20'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidSInt32()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('28'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidSInt64()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('30'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidFixed32()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('3D'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidFixed64()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('41'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidSFixed32()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('4D'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidSFixed64()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('51'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidFloat()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('5D'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidDouble()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('61'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidBool()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('68'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidStringLengthMiss()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('72'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidStringDataMiss()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('7201'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidBytesLengthMiss()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('7A'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidBytesDataMiss()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('7A01'));
     }
 
-    /**
-     * @expectedException Exception
-     */
+    public function testEncodeDecodeValidUtf8()
+    {
+        $m = new TestMessage();
+        $m->mergeFromJsonString("{\"optionalString\":\"\\u1000\"}");
+        $serialized = $m->serializeToString();
+        $m2 = new TestMessage();
+        $m2->mergeFromString($serialized);
+        $this->assertSame($m->getOptionalString(), $m2->getOptionalString());
+    }
+
     public function testDecodeInvalidEnum()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('8001'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidMessageLengthMiss()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('8A01'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidMessageDataMiss()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestMessage();
         $m->mergeFromString(hex2bin('8A0101'));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeInvalidPackedMessageLength()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestPackedMessage();
         $m->mergeFromString(hex2bin('D205'));
     }
@@ -731,7 +745,7 @@ class EncodeDecodeTest extends TestBase
     {
         // Test preserve unknown for varint.
         $m = new TestMessage();
-        $from = hex2bin('F80601');  // TODO(teboring): Add a util to encode
+        $from = hex2bin('F80601');  // TODO: Add a util to encode
                                     // varint for better readability
         $m->mergeFromString($from);
         $to = $m->serializeToString();
@@ -937,6 +951,14 @@ class EncodeDecodeTest extends TestBase
         $this->expectFields($to);
     }
 
+    public function testJsonEncodeNullSubMessage()
+    {
+        $from = new TestMessage();
+        $from->setOptionalMessage(null);
+        $data = $from->serializeToJsonString();
+        $this->assertEquals("{}", $data);
+    }
+
     public function testDecodeDuration()
     {
         $m = new Google\Protobuf\Duration();
@@ -968,6 +990,16 @@ class EncodeDecodeTest extends TestBase
         $m->setNanos(123456789);
         $this->assertEquals("\"2000-01-01T00:00:00.123456789Z\"",
                             $m->serializeToJsonString());
+    }
+
+    public function testEncodeDecodeTimestampConsistency()
+    {
+        $m = new Google\Protobuf\Timestamp();
+        $m->setSeconds(946684800);
+        $m->setNanos(123000000);
+        $m->mergeFromJsonString($m->serializeToJsonString());
+        $this->assertEquals(946684800, $m->getSeconds());
+        $this->assertEquals(123000000, $m->getNanos());
     }
 
     public function testDecodeTopLevelValue()
@@ -1143,11 +1175,10 @@ class EncodeDecodeTest extends TestBase
         $this->assertSame("0801", bin2hex($m1->getAny()->getValue()));
     }
 
-    /**
-     * @expectedException Exception
-     */
     public function testDecodeAnyWithUnknownPacked()
     {
+        $this->expectException(Exception::class);
+
         $m = new TestAny();
         $m->mergeFromJsonString(
             "{\"any\":" .
@@ -1492,5 +1523,23 @@ class EncodeDecodeTest extends TestBase
             [TestInt32Value::class, 1, "1", 0, "0"],
             [TestStringValue::class, "a", "\"a\"", "", "\"\""],
         ];
+    }
+
+    public function testEmptyAnySerialization()
+    {
+        $m = new EmptyAnySerialization();
+
+        $any = new Any();
+        $any->pack($m);
+
+        $data = $any->serializeToJsonString();
+        $this->assertEquals('{"@type":"type.googleapis.com/foo.EmptyAnySerialization"}', $data);
+
+        $any = new Any();
+        $any->mergeFromJsonString($data);
+
+        $m = $any->unpack();
+        $this->assertInstanceOf(EmptyAnySerialization::class, $m);
+        $this->assertEquals('', $m->getA());
     }
 }
