@@ -14,6 +14,10 @@ Copyright (c) 2013-2018 brinkqiang (brink.qiang@gmail.com)
 
 **English** · [简体中文](./README.zh-CN.md) 
 
+## Doc
+
+- [deepwiki-dmorm](https://deepwiki.com/brinkqiang/dmorm)
+
 ## Intro
 dmorm is a framework that simplifies working with relational databases by providing Object-Relational Mapping (ORM) functionality. This guide will explain how to install and use dmorm on both Windows and Linux.
 
