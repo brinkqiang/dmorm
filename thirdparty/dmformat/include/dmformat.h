@@ -3528,14 +3528,14 @@ template <typename... Args, std::size_t SIZE = inline_buffer_size>
 inline format_context::iterator format_to(
     basic_memory_buffer<char, SIZE> &buf, string_view format_str,
     const Args & ... args) {
-  return vformat_to(buf, format_str, make_format_args(args...));
+  return vformat_to(buf, format_str, fmt::make_format_args(args...));
 }
 
 template <typename... Args, std::size_t SIZE = inline_buffer_size>
 inline wformat_context::iterator format_to(
     basic_memory_buffer<wchar_t, SIZE> &buf, wstring_view format_str,
     const Args & ... args) {
-  return vformat_to(buf, format_str, make_format_args<wformat_context>(args...));
+  return vformat_to(buf, format_str, fmt::make_format_args<wformat_context>(args...));
 }
 
 template <typename OutputIt, typename Char = char>

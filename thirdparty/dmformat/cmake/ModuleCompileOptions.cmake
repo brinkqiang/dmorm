@@ -45,7 +45,8 @@ macro(ModuleSetCompileOptions)
   if(POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
   endif()
-  
+
+
   set(CMAKE_C_STANDARD 99)
 
   set(CMAKE_BUILD_RPATH_USE_ORIGIN ON)
@@ -53,7 +54,6 @@ macro(ModuleSetCompileOptions)
   
   if(APPLE)
     set(CMAKE_INSTALL_RPATH "@loader_path;@loader_path/../lib")  # macOS
-
   elseif(UNIX)
     set(CMAKE_INSTALL_RPATH "$ORIGIN:$ORIGIN/../lib")  # Linux
   endif()
@@ -232,42 +232,45 @@ endmacro(ModuleSetCompileOptions)
 
 macro(ModuleSetWinCompilerFlags)
   if (WIN32)
-    set(CompilerFlags
-            CMAKE_CXX_FLAGS
-            CMAKE_CXX_FLAGS_DEBUG
-            CMAKE_CXX_FLAGS_RELEASE
-            CMAKE_CXX_FLAGS_RELWITHDEBINFO
-            CMAKE_CXX_FLAGS_MINSIZEREL
-            CMAKE_C_FLAGS
-            CMAKE_C_FLAGS_DEBUG
-            CMAKE_C_FLAGS_RELEASE
-            CMAKE_C_FLAGS_RELWITHDEBINFO
-            CMAKE_C_FLAGS_MINSIZEREL
-            )
-    foreach(CompilerFlag ${CompilerFlags})
-      string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-    endforeach()
+    if(POLICY CMP0091)
+        cmake_policy(SET CMP0091 NEW)
+    endif()
+  
+    if (MSVC)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
   endif (WIN32)
 endmacro()
 
-macro(AddInstall ModuleList)
+
+macro(AddInstall ModuleList HeadersDir)
     message(STATUS "CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
     message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+    message(STATUS "HeadersDir: ${HeadersDir}")
     message(STATUS "Install Path: ${CMAKE_INSTALL_PREFIX}/bin")
 
     message(STATUS "AddInstall ${ModuleList} ...")
     if (WIN32)
         install(TARGETS ${ModuleList}
         RUNTIME DESTINATION bin
-        LIBRARY DESTINATION bin
-        ARCHIVE DESTINATION bin)
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
     else(WIN32)
         include(GNUInstallDirs)
         install(TARGETS ${ModuleList}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_BINDIR})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endif(WIN32)
+
+    if (EXISTS "${HeadersDir}" AND NOT "${HeadersDir}" STREQUAL "")
+        message(STATUS "Installing headers from: ${HeadersDir}")
+        install(DIRECTORY "${HeadersDir}/"
+                DESTINATION include
+                FILES_MATCHING 
+                PATTERN "*.h"
+                PATTERN "*.hpp")
+    endif()
 
     configure_file(
             "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
