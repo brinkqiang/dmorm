@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.21)
 
-PROJECT(dmflags)
+project(dmflags)
 
-LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-INCLUDE(cmake/ModuleImport.cmake)
-INCLUDE(cmake/ModuleCompileOptions.cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(cmake/ModuleImport.cmake)
+include(cmake/ModuleCompileOptions.cmake)
 ModuleSetCompileOptions()
 
-ADD_DEFINITIONS(-DGFLAGS_DLL_DECL=)
+add_definitions(-DGFLAGS_DLL_DECL=)
 
 include (CheckTypeSize)
 include (CheckIncludeFileCXX)
@@ -98,27 +98,30 @@ configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/src/gflags_declare.h.in" "${CMAKE_C
 configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/src/gflags_ns.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/src/gflags_gflags.h")
 configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/src/gflags.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/src/gflags.h")
 
-IF (WIN32)
-    INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src/windows)
-ENDIF(WIN32)
+if (WIN32)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/windows)
+endif()
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-FILE(GLOB_RECURSE SOURCES 
+file(GLOB_RECURSE SOURCES 
 ${CMAKE_CURRENT_SOURCE_DIR}/src/gflags.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/src/gflags_reporting.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/src/gflags_completions.cc)
 
-IF (WIN32)
-    LIST(APPEND SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/windows_port.cc)
-ENDIF(WIN32)
+if (WIN32)
+    list(APPEND SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/windows_port.cc)
+endif()
 
-ADD_LIBRARY(dmflags ${SOURCES})
+add_library(dmflags ${SOURCES})
 
-FILE(GLOB_RECURSE SOURCES 
-${CMAKE_CURRENT_SOURCE_DIR}/test/main.cc)
+if(PROJECT_IS_TOP_LEVEL)
 
-ADD_EXECUTABLE(dmflagstest ${SOURCES})
-TARGET_LINK_LIBRARIES(dmflagstest dmflags)
+    file(GLOB_RECURSE SOURCES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cc)
+
+    add_executable(dmflagstest ${SOURCES})
+    target_link_libraries(dmflagstest dmflags)
+endif()
